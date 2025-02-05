@@ -1,0 +1,94 @@
+/* cart.css */
+
+/* Style for the Cart Page container */
+.cart-page {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .cart-page h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  /* Empty cart message */
+  .cart-page p {
+    text-align: center;
+    color: #777;
+  }
+  
+  /* Cart item list styling */
+  .cart-page ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  /* Cart item */
+  .cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+  }
+  
+  /* Cart item image */
+  .cart-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  /* Cart item details */
+  .cart-item div {
+    flex: 1;
+    margin-left: 20px;
+  }
+  
+  .cart-item h4 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .cart-item p {
+    margin: 5px 0;
+    color: #555;
+  }
+  
+  /* Remove button */
+  .cart-item button {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cart-item button:hover {
+    background-color: #c82333;
+  }
+  /* cart.css */
+  
+  .cart-page .cart-item input[type="number"] {
+    width: 60px;
+    margin-left: 10px;
+    padding: 5px;
+  }
+  
+  .cart-total {
+    margin-top: 20px;
+    text-align: right;
+    font-size: 1.2em;
+  }
+  
+  .cart-total h3 {
+    color: #333;
+  }
+  

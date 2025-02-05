@@ -1,0 +1,123 @@
+/* About Us Page Styles */
+.about-us-container {
+  font-family: 'Poppins', sans-serif;
+  color: #444;
+  padding-bottom: 3rem;
+}
+
+/* Hero Section */
+.about-hero {
+  background: linear-gradient(120deg, #00b4db, #0083b0); /* Beautiful blue gradient */
+  color: white;
+  padding: 6rem 2rem;
+  text-align: center;
+  border-bottom-left-radius: 80% 10%;
+  border-bottom-right-radius: 80% 10%;
+  position: relative;
+  overflow: hidden;
+}
+
+.about-hero h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  animation: fadeInDown 1s ease-in-out;
+}
+
+.about-hero p {
+  font-size: 1.4rem;
+  margin-top: 1rem;
+  animation: fadeInUp 1s ease-in-out;
+}
+
+/* Content Section */
+.about-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 2rem;
+  padding: 0 2rem;
+}
+
+/* Cards */
+.card {
+  background-color: white;
+  margin: 1rem;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  flex: 1 1 300px;
+  max-width: 400px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card h2 {
+  font-size: 1.8rem;
+  color: #0083b0;
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.card p, .card ul {
+  font-size: 1.1rem;
+  color: #555;
+  line-height: 1.7;
+}
+
+.card ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.card ul li {
+  margin-bottom: 0.5rem;
+}
+
+.card ul li strong {
+  color: #00b4db;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Animations */
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Media Queries */
+@media screen and (max-width: 768px) {
+  .about-hero {
+    padding: 4rem 1rem;
+    border-bottom-left-radius: 50% 10%;
+    border-bottom-right-radius: 50% 10%;
+  }
+
+  .about-content {
+    padding: 0 1rem;
+  }
+
+  .card {
+    flex: 1 1 100%;
+  }
+}

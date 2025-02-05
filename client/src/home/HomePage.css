@@ -1,0 +1,204 @@
+/* General Styling */
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Product Cards Section */
+.product-cards {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 2rem;
+  padding: 2rem;
+  background-color: #f0f0f5;
+  border-radius: 10px;
+  flex-wrap: wrap; /* Allow cards to wrap on smaller screens */
+}
+
+.card {
+  width: 18rem;
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  position: relative;
+  background-color: white;
+  text-align: center;
+  margin-bottom: 2rem; /* Add space between rows */
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.card-img-top {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 2px solid #007bff;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.card-text {
+  font-size: 1rem;
+  color: #333;
+}
+
+.old-price {
+  text-decoration: line-through;
+  color: red;
+  margin-left: 0.5rem;
+}
+
+.sale-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff4747;
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  z-index: 2;
+}
+
+/* Jumbotron Customization */
+.jumbotron {
+  background-color: #f8f9fa;
+  padding: 4rem 2rem;
+  background-image: url('../images/home1.jpg');
+  background-size: cover;
+  background-position: center;
+  color: white; /* Make all text in jumbotron white */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  position: relative;
+  border-radius: 10px;
+}
+
+.jumbotron::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.jumbotron h1,
+.jumbotron p,
+.jumbotron .btn {
+  position: relative;
+  z-index: 2;
+  color: white; /* Explicitly set text color to white */
+}
+
+.jumbotron h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.jumbotron p {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.jumbotron .btn {
+  font-size: 1.2rem;
+  padding: 0.75rem 1.5rem;
+  color: white;
+  border-color: white;
+}
+
+/* Button Customization */
+.btn-outline-primary {
+  border-color: #007bff;
+  color: #007bff;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Responsive Styling */
+@media (max-width: 992px) {
+  .product-cards {
+    justify-content: center;
+  }
+
+  .card {
+    margin-bottom: 1.5rem;
+  }
+
+  .jumbotron h1 {
+    font-size: 2.5rem;
+  }
+
+  .jumbotron p {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    width: 90%; /* Full width for smaller screens */
+  }
+
+  .jumbotron {
+    padding: 3rem 1.5rem;
+  }
+
+  .jumbotron h1 {
+    font-size: 2rem;
+  }
+
+  .jumbotron p {
+    font-size: 1.2rem;
+  }
+
+  .jumbotron .btn {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .jumbotron {
+    padding: 2rem 1rem;
+  }
+
+  .jumbotron h1 {
+    font-size: 1.8rem;
+  }
+
+  .jumbotron p {
+    font-size: 1rem;
+  }
+
+  .jumbotron .btn {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
