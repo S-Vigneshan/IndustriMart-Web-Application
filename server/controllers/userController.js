@@ -153,10 +153,32 @@ const deleteUserProfile = async (req, res) => {
   }
 };
 
+const updatePassword = async (req, res) => {
+  try {
+    const { password } = req.body;
+    const userId = req.user.id; // From auth middleware
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Update user password
+    await User.findByIdAndUpdate(userId, {
+      password: hashedPassword
+    });
+
+    res.status(200).json({ message: 'Password updated successfully' });
+  } catch (error) {
+    console.error('Update Password Error:', error);
+    res.status(500).json({ message: 'Error updating password' });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
   getUserProfile,
   updateUserProfile,
-  deleteUserProfile
+  deleteUserProfile,
+  updatePassword
 };

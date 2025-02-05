@@ -18,4 +18,8 @@ router.get("/profile", authMiddleware, getUserProfile);
 router.put("/profile", authMiddleware, updateUserProfile);
 router.delete("/profile", authMiddleware, deleteUserProfile);
 
+
+//update password
+router.post('/update-password', auth, updatePassword);
+
 module.exports = router;

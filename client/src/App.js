@@ -14,7 +14,7 @@ import Footer from './footer/footer'; // Import Footer component
 import ProtectedRoute from './components/ProtectedRoute';
 import Profile from './my profile/profile'; // Add this import
 import ForgotPassword from './forgotPass/forgotPass'; // Add this import
-
+import UpdatePassword from './updatepassword/updatePass'; // Add this import  
 
 function App() {
   return (
@@ -54,6 +54,7 @@ function App() {
             <Route path="/about" element={<AboutUsPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/update-password" element={<UpdatePassword />} />
             
           </Routes>
         
