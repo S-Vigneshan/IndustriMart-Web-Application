@@ -13,6 +13,7 @@ import ProductDetails from './ProductModal/ProductDetails';
 import Footer from './footer/footer'; // Import Footer component
 import ProtectedRoute from './components/ProtectedRoute';
 import Profile from './my profile/profile'; // Add this import
+import ForgotPassword from './forgotPass/forgotPass'; // Add this import
 
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
             {/* Public Routes */}
             <Route path="/about" element={<AboutUsPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             
           </Routes>
         
