@@ -6,7 +6,8 @@ const {
   loginUser, 
   getUserProfile, 
   updateUserProfile,
-  deleteUserProfile
+  deleteUserProfile,
+  updatePassword
 } = require('../controllers/userController');
 
 // Auth routes
@@ -20,6 +21,6 @@ router.delete("/profile", authMiddleware, deleteUserProfile);
 
 
 //update password
-router.post('/update-password', auth, updatePassword);
+router.post('/update-password', updatePassword);
 
 module.exports = router;
