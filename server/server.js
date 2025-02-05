@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const authRoutes = require("./routes/auth");
+const otpRoutes = require("./routes/forgotPass");
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.use("/api", authRoutes);
+app.use("/api/", otpRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

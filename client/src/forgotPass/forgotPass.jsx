@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { FaEnvelope, FaKey } from 'react-icons/fa';
 
@@ -14,25 +15,29 @@ const ForgotPassword = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // API call to send OTP
+      const { data } = await axios.post('http://localhost:5000/api/send-otp', { email });
       setOtpSent(true);
-      setSuccess('OTP sent successfully!');
+      setSuccess(data.message || 'OTP sent successfully to your email!');
       setError('');
     } catch (err) {
-      setError('Failed to send OTP. Please try again.');
+      setError(err.response?.data?.message || 'Failed to send OTP. Please try again.');
+      setOtpSent(false);
     }
     setLoading(false);
   };
-
+  
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      // API call to verify OTP
-      setSuccess('OTP verified successfully!');
+      const { data } = await axios.post('http://localhost:5000/api/verify-otp', { 
+        email, 
+        otp 
+      });
+      setSuccess(data.message || 'OTP verified successfully!');
       setError('');
     } catch (err) {
-      setError('Invalid OTP. Please try again.');
+      setError(err.response?.data?.message || 'Invalid OTP. Please try again.');
     }
     setLoading(false);
   };
