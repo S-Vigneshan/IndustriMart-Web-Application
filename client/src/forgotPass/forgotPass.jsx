@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { FaEnvelope, FaKey } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -10,6 +12,7 @@ const ForgotPassword = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   const handleSendOTP = async (e) => {
     e.preventDefault();
@@ -36,10 +39,17 @@ const ForgotPassword = () => {
       });
       setSuccess(data.message || 'OTP verified successfully!');
       setError('');
+      
+      // Add slight delay before navigation for user to see success message
+      setTimeout(() => {
+        navigate('/update-password', { state: { email } });
+      }, 1500);
+      
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid OTP. Please try again.');
     }
     setLoading(false);
+  
   };
 
   return (
