@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { FaEye, FaEyeSlash, FaLock, FaKey, FaShieldAlt } from 'react-icons/fa';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const UpdatePassword = () => {
+  const location = useLocation();
+  const email = location.state?.email;
   const [passwords, setPasswords] = useState({
     newPassword: '',
     confirmPassword: ''
@@ -33,28 +35,51 @@ const UpdatePassword = () => {
     });
   };
 
+  const validatePassword = (password) => {
+    const minLength = password.length >= 6;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*]/.test(password);
+  
+    if (!minLength) return 'Password must be at least 6 characters long';
+    if (!hasUpperCase) return 'Password must contain at least one uppercase letter';
+    if (!hasLowerCase) return 'Password must contain at least one lowercase letter';
+    if (!hasNumber) return 'Password must contain at least one number';
+    if (!hasSpecialChar) return 'Password must contain at least one special character (!@#$%^&*)';
+    
+    return null;
+  };
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+      
+    if (!email) {
+      setError('Email not found. Please try the forgot password process again.');
+      return;
+    }
+  
+    const passwordError = validatePassword(passwords.newPassword);
+    if (passwordError) {
+      setError(passwordError);
+      return;
+    }
+  
     if (passwords.newPassword !== passwords.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
-    if (passwords.newPassword.length < 6) {
-      setError('Password must be at least 6 characters long');
-      return;
-    }
-
     setLoading(true);
     try {
-      const { data } = await axios.post('http://localhost:5000/api/update-password', 
-        { password: passwords.newPassword },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }}
-      );
+      const { data } = await axios.patch('http://localhost:5000/api/reset-password', {
+        email: email,
+        password: passwords.newPassword
+      });
       
       setSuccess(data.message || 'Password updated successfully');
-      setTimeout(() => navigate('/profile'), 2000);
+      setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update password');
     }
@@ -115,7 +140,8 @@ const UpdatePassword = () => {
                   </span>
                 </div>
                 <Form.Text className="text-muted">
-                  Password must be at least 6 characters long
+                  Password must be at least 6 characters long and contain uppercase, lowercase, 
+                  number and special character (!@#$%^&*)
                 </Form.Text>
               </Form.Group>
 
