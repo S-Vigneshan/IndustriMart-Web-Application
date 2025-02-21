@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.use("/api", authRoutes);
-app.use("/api/", otpRoutes);
+app.use("/api", otpRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
