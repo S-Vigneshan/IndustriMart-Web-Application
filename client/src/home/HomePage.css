@@ -78,7 +78,7 @@ body {
 .jumbotron {
   background-color: #f8f9fa;
   padding: 4rem 2rem;
-  background-image: url('../images/home1.jpg');
+  background-image: url('../assets/image/about.png');
   background-size: cover;
   background-position: center;
   color: white; /* Make all text in jumbotron white */
