@@ -7,11 +7,11 @@ const ShopPage = () => {
 
   // Original product data
   const [products] = useState([
-    { id: 1, name: "Aluminium Sheet", price: 50.0, stock: true, image: "/images/download.jpeg", category: "Sheets" },
-    { id: 2, name: "Bronze Sheet", price: 60.0, stock: true, image: "/images/bronze-sheet.jpg", category: "Sheets" },
-    { id: 3, name: "Copper Rod", price: 30.0, stock: true, image: "/images/copper-rod.jpg", category: "Rods" },
-    { id: 4, name: "Brass Rod", price: 40.0, stock: true, image: "/images/brass-rod.jpg", category: "Rods" },
-    { id: 5, name: "Bronze Rod", price: 45.0, stock: false, image: "/images/bronze-rod.jpg", category: "Rods" },
+    { id: 1, name: "Aluminium Sheet", price: 50.0, stock: true, image: "/images/Aluminiumsheet.jpeg", category: "Sheets" },
+    { id: 2, name: "Bronze Sheet", price: 60.0, stock: true, image: "/images/coppersheet.jpeg", category: "Sheets" },
+    { id: 3, name: "Copper Rod", price: 30.0, stock: true, image: "/images/copperrod.jpeg", category: "Rods" },
+    { id: 4, name: "Brass Rod", price: 40.0, stock: true, image: "/images/brassrod.jpeg", category: "Rods" },
+    { id: 5, name: "Bronze Rod", price: 45.0, stock: false, image: "/images/bronzerod.jpeg", category: "Rods" },
     { id: 6, name: "Plastic Bottle", price: 10.0, stock: true, image: "/images/plastic-bottle.jpg", category: "Bottles" },
     { id: 7, name: "Empty Glass Bottle", price: 20.0, stock: true, image: "/images/glass-bottle.jpg", category: "Bottles" },
     { id: 8, name: "Cardboard Box", price: 15.0, stock: true, image: "/images/cardboard-box.jpg", category: "Packaging Materials" },

@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom'; // Add useNavigate
-import { FaShoppingCart, FaUserCircle, FaSignOutAlt } from 'react-icons/fa'; // Add FaSignOutAlt
-import './navbar.css'; // Import the CSS file
-import logo from '../images/about.png'; // Ensure this path is correct
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FaShoppingCart, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
+import './navbar.css';
+import logo from '../assets/image/about.png'; // Updated import path to be within src directory
 import { CartContext } from '../context/CartContext'; // Import Cart Context to get cartItems
 import { getUsername, isAuthenticated, logout } from '../services/authService';
 
@@ -26,7 +26,7 @@ const Navbar = () => {
     <nav className="navbar navbar-expand-lg navbar-dark bg-blue">
       {/* Brand Logo */}
       <Link className="navbar-brand d-flex align-items-center" to="/">
-        <img src={logo} alt=" Logo" className="logo" />
+        <img src={logo} alt="Industrimart Logo" className="logo" style={{ width: '30px', height: '30px' }} />
         <span className="ml-2">Industrimart </span>
       </Link>
 
