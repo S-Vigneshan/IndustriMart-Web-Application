@@ -15,13 +15,16 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Profile from './my profile/profile'; // Add this import
 import ForgotPassword from './forgotPass/forgotPass'; // Add this import
 import UpdatePassword from './updatepassword/updatePass'; // Add this import  
+import AdminRoute from './components/AdminRoute';
+import A_SignIn from './Admin/A_SignIn';
+import Dashboard from './Admin/DashBoard';
 
 function App() {
   return (
     <CartProvider>
       <Router>
-        {/* Navbar will be displayed on every page */}
-        <Navbar />
+        {/* Conditional Navbar rendering - Don't show on admin routes */}
+        {!window.location.pathname.includes('/admin') && <Navbar />}
         
           <Routes>
             <Route path="/login" element={<Login />} />
@@ -55,11 +58,34 @@ function App() {
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/update-password" element={<UpdatePassword />} />
+
+            {/* Admin Routes */}
+            <Route path="/admin/signin" element={<A_SignIn />} />
+            <Route path="/admin/dashboard" element={
+              <AdminRoute>
+                <Dashboard />
+              </AdminRoute>
+            } />
+            <Route path="/admin/users" element={
+              <AdminRoute>
+                <Dashboard />
+              </AdminRoute>
+            } />
+            <Route path="/admin/products" element={
+              <AdminRoute>
+                <Dashboard />
+              </AdminRoute>
+            } />
+            <Route path="/admin/settings" element={
+              <AdminRoute>
+                <Dashboard />
+              </AdminRoute>
+            } />
             
           </Routes>
         
-        {/* Footer will be displayed on every page */}
-        <Footer />
+        {/* Conditional Footer rendering - Don't show on admin routes */}
+        {!window.location.pathname.includes('/admin') && <Footer />}
       </Router>
     </CartProvider>
   );

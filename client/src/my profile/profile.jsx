@@ -106,7 +106,7 @@ const Profile = () => {
                     <FaUser size={50} className="text-primary" />
                   </div>
                 </div>
-                <h2 className="text-center mb-0">{user?.name}</h2>
+                <h2 className="text-center mb-0 text-white">{user?.name}</h2>
                 <p className="text-center mb-0 text-white-50">{user?.email}</p>
               </div>
 
