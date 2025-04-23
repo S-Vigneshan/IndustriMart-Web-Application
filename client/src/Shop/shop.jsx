@@ -6,17 +6,23 @@ import "./shop.css";
 const ShopPage = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
-  
+  const [categories, setCategories] = useState([]); // Add this line
+  const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/admin/products');
-        setProducts(response.data);
+        const [productsRes, categoriesRes] = await Promise.all([
+          axios.get('http://localhost:5000/api/admin/products'),
+          axios.get('http://localhost:5000/api/admin/categories')
+        ]);
+        setProducts(productsRes.data);
+        setCategories(categoriesRes.data);
       } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('Error fetching data:', error);
       }
     };
-    fetchProducts();
+    fetchData();
   }, []);
 
   // State for filters
@@ -33,12 +39,32 @@ const ShopPage = () => {
     setSortOption(e.target.value);
   };
 
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  // Handle search button click
+  const handleSearch = () => {
+    // The filtering will happen automatically through filteredProducts
+  };
+
   // Apply filters and sorting
   const filteredProducts = products
-    .filter((product) => (categoryFilter ? product.category === categoryFilter : true))
+    .filter((product) => {
+      const matchesCategory = categoryFilter ? product.category._id === categoryFilter : true;
+      const matchesSearch = searchQuery
+        ? product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (product.category && product.category.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        : true;
+      return matchesCategory && matchesSearch;
+    })
     .sort((a, b) => {
-      if (sortOption === "price-low") return a.price - b.price; // Low to High
-      if (sortOption === "price-high") return b.price - a.price; // High to Low
+      const priceA = a.defaultSizes && a.defaultSizes[0] ? a.defaultSizes[0].price : 0;
+      const priceB = b.defaultSizes && b.defaultSizes[0] ? b.defaultSizes[0].price : 0;
+      
+      if (sortOption === "price-low") return priceA - priceB; // Low to High
+      if (sortOption === "price-high") return priceB - priceA; // High to Low
       return 0; // Default (no sorting)
     });
 
@@ -52,8 +78,14 @@ const ShopPage = () => {
       <header className="shop-header">
         <h1>IndustriMart Shop</h1>
         <div className="search-bar">
-          <input type="text" placeholder="Search products..." />
-          <button>Search</button>
+          <input 
+            type="text" 
+            placeholder="Search products..." 
+            value={searchQuery}
+            onChange={handleSearchChange}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+          />
+          <button onClick={handleSearch}>Search</button>
         </div>
       </header>
 
@@ -62,11 +94,11 @@ const ShopPage = () => {
         <h3>Filters</h3>
         <select onChange={handleCategoryChange}>
           <option value="">All Categories</option>
-          <option value="Sheets">Sheets</option>
-          <option value="Rods">Rods</option>
-          <option value="Bottles">Bottles</option>
-          <option value="Packaging Materials">Packaging Materials</option>
-          <option value="Scrap Metal">Scrap Metal</option>
+          {categories.map(category => (
+            <option key={category._id} value={category._id}>
+              {category.name}
+            </option>
+          ))}
         </select>
         <select onChange={handleSortChange}>
           <option value="">Sort By</option>
