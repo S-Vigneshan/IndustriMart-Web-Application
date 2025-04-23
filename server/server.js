@@ -25,6 +25,7 @@ app.use("/api", authRoutes);
 app.use("/api", otpRoutes);
 app.use("/api/admin", adminRoutes);
 
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

@@ -1,5 +1,7 @@
 const Product = require('../models/product');
 const Category = require('../models/category');
+const multer = require('multer');
+const path = require('path');
 
 exports.createProduct = async (req, res) => {
   try {
@@ -7,6 +9,22 @@ exports.createProduct = async (req, res) => {
     if (!category) {
       return res.status(400).json({ message: 'Invalid category' });
     }
+
+    // Handle uploaded images
+    if (req.files && req.files.length > 0) {
+      req.body.images = req.files.map(file => ({
+        url: `/uploads/${file.filename}`,
+        altText: file.originalname
+      }));
+    }
+
+    // Parse defaultSizes if it's sent as a string (from FormData)
+    if (typeof req.body.defaultSizes === 'string') {
+      req.body.defaultSizes = JSON.parse(req.body.defaultSizes);
+    }
+
+    // Convert allowCustomSize to boolean (because FormData sends it as string)
+    req.body.allowCustomSize = req.body.allowCustomSize === 'true';
 
     const product = new Product(req.body);
     const savedProduct = await product.save();

@@ -1,24 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./shop.css";
 
 const ShopPage = () => {
   const navigate = useNavigate();
-
-  // Original product data
-  const [products] = useState([
-    { id: 1, name: "Aluminium Sheet", price: 50.0, stock: true, image: "/images/Aluminiumsheet.jpeg", category: "Sheets" },
-    { id: 2, name: "Bronze Sheet", price: 60.0, stock: true, image: "/images/coppersheet.jpeg", category: "Sheets" },
-    { id: 3, name: "Copper Rod", price: 30.0, stock: true, image: "/images/copperrod.jpeg", category: "Rods" },
-    { id: 4, name: "Brass Rod", price: 40.0, stock: true, image: "/images/brassrod.jpeg", category: "Rods" },
-    { id: 5, name: "Bronze Rod", price: 45.0, stock: false, image: "/images/bronzerod.jpeg", category: "Rods" },
-    { id: 6, name: "Plastic Bottle", price: 10.0, stock: true, image: "/images/plastic-bottle.jpg", category: "Bottles" },
-    { id: 7, name: "Empty Glass Bottle", price: 20.0, stock: true, image: "/images/glass-bottle.jpg", category: "Bottles" },
-    { id: 8, name: "Cardboard Box", price: 15.0, stock: true, image: "/images/cardboard-box.jpg", category: "Packaging Materials" },
-    { id: 9, name: "Polypropylene Bag", price: 5.0, stock: true, image: "/images/pp-bag.jpg", category: "Packaging Materials" },
-    { id: 10, name: "Scrap Aluminum", price: 25.0, stock: true, image: "/images/scrap-aluminum.jpg", category: "Scrap Metal" },
-    { id: 11, name: "Scrap Copper", price: 35.0, stock: true, image: "/images/scrap-copper.jpg", category: "Scrap Metal" },
-  ]);
+  const [products, setProducts] = useState([]);
+  
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/admin/products');
+        setProducts(response.data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   // State for filters
   const [categoryFilter, setCategoryFilter] = useState("");
@@ -79,13 +78,15 @@ const ShopPage = () => {
       {/* Product Listing */}
       <div className="product-list">
         {filteredProducts.map((product) => (
-          <div className="product-card" key={product.id}>
-            <img src={product.image} alt={product.name} />
+          <div className="product-card" key={product._id}>
+            <img 
+              src={product.images && product.images[0] ? product.images[0].url : '/placeholder.jpg'} 
+              alt={product.name} 
+            />
             <h3>{product.name}</h3>
-            <p>රු. {product.price.toFixed(2)}</p>
-            <p className={product.stock ? "in-stock" : "out-of-stock"}>
-              {product.stock ? "In Stock" : "Out of Stock"}
-            </p>
+            <p>රු. {product.defaultSizes && product.defaultSizes[0] ? 
+              product.defaultSizes[0].price.toFixed(2) : 
+              "Price varies"}</p>
             <button
               className="view-details-btn"
               onClick={() => handleViewDetails(product)}
