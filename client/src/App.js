@@ -18,6 +18,7 @@ import UpdatePassword from './updatepassword/updatePass'; // Add this import
 import AdminRoute from './components/AdminRoute';
 import A_SignIn from './Admin/A_SignIn';
 import Dashboard from './Admin/DashBoard';
+import UserManagement from './Admin/user';
 
 function App() {
   return (
@@ -68,7 +69,7 @@ function App() {
             } />
             <Route path="/admin/users" element={
               <AdminRoute>
-                <Dashboard />
+                <UserManagement />
               </AdminRoute>
             } />
             <Route path="/admin/products" element={

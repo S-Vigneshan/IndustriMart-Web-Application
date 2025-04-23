@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const authRoutes = require("./routes/auth");
 const otpRoutes = require("./routes/forgotPass");
+const adminRoutes = require("./routes/admin");
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(bodyParser.json());
 // Routes
 app.use("/api", authRoutes);
 app.use("/api", otpRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
