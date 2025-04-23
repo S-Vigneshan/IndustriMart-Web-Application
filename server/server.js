@@ -7,6 +7,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/auth");
 const otpRoutes = require("./routes/forgotPass");
 const adminRoutes = require("./routes/admin");
+const path = require('path');
 
 const app = express();
 
@@ -19,6 +20,10 @@ app.use(cors({
 // Middleware
 app.use(express.json());
 app.use(bodyParser.json());
+
+// Serve static files from the uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
 app.use("/api", authRoutes);

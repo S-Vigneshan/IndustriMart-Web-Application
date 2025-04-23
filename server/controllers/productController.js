@@ -10,10 +10,10 @@ exports.createProduct = async (req, res) => {
       return res.status(400).json({ message: 'Invalid category' });
     }
 
-    // Handle uploaded images
+    // Handle uploaded images with full URL
     if (req.files && req.files.length > 0) {
       req.body.images = req.files.map(file => ({
-        url: `/uploads/${file.filename}`,
+        url: `http://localhost:5000/uploads/${file.filename}`,
         altText: file.originalname
       }));
     }

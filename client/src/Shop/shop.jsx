@@ -80,8 +80,13 @@ const ShopPage = () => {
         {filteredProducts.map((product) => (
           <div className="product-card" key={product._id}>
             <img 
-              src={product.images && product.images[0] ? product.images[0].url : '/placeholder.jpg'} 
-              alt={product.name} 
+              src={product.images && product.images[0] ? 
+                product.images[0].url : 
+                'http://localhost:5000/placeholder.jpg'} 
+              alt={product.name}
+              onError={(e) => {
+                e.target.src = 'http://localhost:5000/placeholder.jpg';
+              }}
             />
             <h3>{product.name}</h3>
             <p>රු. {product.defaultSizes && product.defaultSizes[0] ? 
