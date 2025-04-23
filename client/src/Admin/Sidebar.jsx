@@ -31,6 +31,11 @@ const Sidebar = () => {
             </Link>
           </li>
           <li className="nav-item">
+            <Link to="/admin/categories" className="nav-link text-white">
+              <i className="bi bi-tag me-2"></i>Categories
+            </Link>
+          </li>
+          <li className="nav-item">
             <Link to="/admin/settings" className="nav-link text-white">
               <i className="bi bi-gear me-2"></i>Settings
             </Link>

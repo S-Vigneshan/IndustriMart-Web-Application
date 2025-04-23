@@ -19,6 +19,8 @@ import AdminRoute from './components/AdminRoute';
 import A_SignIn from './Admin/A_SignIn';
 import Dashboard from './Admin/DashBoard';
 import UserManagement from './Admin/user';
+import ProductManagement from './Admin/Product_Manage';  // Changed to PascalCase
+import Category from './Admin/category'; // Add this import
 
 function App() {
   return (
@@ -74,7 +76,12 @@ function App() {
             } />
             <Route path="/admin/products" element={
               <AdminRoute>
-                <Dashboard />
+                <ProductManagement />  {/* Changed to PascalCase */}
+              </AdminRoute>
+            } />
+            <Route path="/admin/categories" element={
+              <AdminRoute>
+                <Category />  {/* Changed to PascalCase */}
               </AdminRoute>
             } />
             <Route path="/admin/settings" element={
