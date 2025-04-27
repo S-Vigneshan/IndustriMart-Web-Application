@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaShoppingCart, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
 import './navbar.css';
-import logo from '../assets/image/about.png'; // Updated import path to be within src directory
+import logo from '../assets/image/logo.avif'; // Updated import path to be within src directory
 import { CartContext } from '../context/CartContext'; // Import Cart Context to get cartItems
 import { getUsername, isAuthenticated, logout } from '../services/authService';
 

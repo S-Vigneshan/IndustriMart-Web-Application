@@ -6,8 +6,10 @@
 }
 
 .navbar .navbar-brand .logo {
+ margin-left: 10px;
   width: 40px;
   height: auto;
+  border-radius: 50%;
 }
 
 .navbar-nav .nav-link {
