@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const A_SignIn = () => {
+const AdminSignIn = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const navigate = useNavigate();
 
@@ -51,4 +51,4 @@ const A_SignIn = () => {
   );
 };
 
-export default A_SignIn;
+export default AdminSignIn;

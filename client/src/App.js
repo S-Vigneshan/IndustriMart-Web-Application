@@ -16,11 +16,12 @@ import Profile from './my profile/profile'; // Add this import
 import ForgotPassword from './forgotPass/forgotPass'; // Add this import
 import UpdatePassword from './updatepassword/updatePass'; // Add this import  
 import AdminRoute from './components/AdminRoute';
-import A_SignIn from './Admin/A_SignIn';
+import AdminSignIn from './Admin/AdminSignIn';
 import Dashboard from './Admin/DashBoard';
 import UserManagement from './Admin/user';
 import ProductManagement from './Admin/Product_Manage';  // Changed to PascalCase
 import Category from './Admin/category'; // Add this import
+import Checkout from './Checkout/checkout'; // Add this import
 
 function App() {
   return (
@@ -55,6 +56,11 @@ function App() {
                 <Profile />
               </ProtectedRoute>
             } />
+            <Route path="/checkout" element={
+                  <ProtectedRoute>
+                   <Checkout />
+                  </ProtectedRoute>
+            } />
             
             {/* Public Routes */}
             <Route path="/about" element={<AboutUsPage />} />
@@ -63,7 +69,7 @@ function App() {
             <Route path="/update-password" element={<UpdatePassword />} />
 
             {/* Admin Routes */}
-            <Route path="/admin/signin" element={<A_SignIn />} />
+            <Route path="/admin/signin" element={<AdminSignIn />} />
             <Route path="/admin/dashboard" element={
               <AdminRoute>
                 <Dashboard />
