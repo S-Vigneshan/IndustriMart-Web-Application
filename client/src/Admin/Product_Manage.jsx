@@ -10,6 +10,7 @@ const Product_Manage = () => {
     category: '',
     allowCustomSize: false,
     defaultSizes: [],
+    perMeterPrice: 0,
   });
   const [sizeInput, setSizeInput] = useState({ size: '', price: '' });
   const [images, setImages] = useState([]);
@@ -18,6 +19,7 @@ const Product_Manage = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [existingImages, setExistingImages] = useState([]);
 
   useEffect(() => {
     fetchProducts();
@@ -52,16 +54,18 @@ const Product_Manage = () => {
     }
 
     const productData = {
-      _id: product._id, // Add this line to store the product ID
+      _id: product._id,
       name: product.name || '',
       description: product.description || '',
       category: product.category?._id || '',
       allowCustomSize: Boolean(product.allowCustomSize),
       defaultSizes: Array.isArray(product.defaultSizes) ? product.defaultSizes : [],
+      perMeterPrice: product.perMeterPrice || 0  // Add this line
     };
 
     setEditingProduct(product);
     setProduct(productData);
+    setExistingImages(product.images || []); // Set existing images
     setIsEditing(true);
     setShowModal(true);
   };
@@ -80,42 +84,59 @@ const Product_Manage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-
-    // Add all product fields to formData
-    Object.keys(product).forEach(key => {
-      if (key === 'defaultSizes') {
-        formData.append(key, JSON.stringify(product[key]));
-      } else {
-        formData.append(key, product[key]);
-      }
-    });
-
-    // Add images if any
+  
+    // Add basic fields
+    formData.append('name', product.name);
+    formData.append('description', product.description);
+    formData.append('category', product.category);
+    formData.append('allowCustomSize', String(product.allowCustomSize));
+    formData.append('perMeterPrice', String(product.allowCustomSize ? product.perMeterPrice : 0));
+    formData.append('defaultSizes', JSON.stringify(product.defaultSizes));
+    
+    // Add existing images
+    formData.append('existingImages', JSON.stringify(existingImages));
+  
+    // Add new images
     if (images.length > 0) {
       images.forEach(img => formData.append('images', img));
     }
-
+  
     try {
-      if (isEditing && editingProduct?._id) {
-        await axios.put(`http://localhost:5000/api/admin/products/${editingProduct._id}`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-      } else {
-        await axios.post('http://localhost:5000/api/admin/products', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
+      const url = isEditing && editingProduct?._id 
+        ? `http://localhost:5000/api/admin/products/${editingProduct._id}`
+        : 'http://localhost:5000/api/admin/products';
+  
+      const method = isEditing ? 'put' : 'post';
+  
+      const response = await axios({
+        method,
+        url,
+        data: formData,
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+  
+      if (response.data) {
+        await fetchProducts();
+        resetForm();
+        setShowModal(false);
       }
-      await fetchProducts();
-      resetForm();
-      setShowModal(false);
     } catch (error) {
       console.error('Error saving product:', error);
+      alert('Error saving product: ' + (error.response?.data?.message || error.message));
     }
   };
 
   const resetForm = () => {
-    setProduct({ name: '', description: '', category: '', allowCustomSize: false, defaultSizes: [] });
+    setProduct({ 
+      name: '', 
+      description: '', 
+      category: '', 
+      allowCustomSize: false, 
+      defaultSizes: [],
+      perMeterPrice: 0
+    });
     setImages([]);
+    setExistingImages([]); // Clear existing images
     setIsEditing(false);
     setEditingProduct(null);
   };
@@ -165,19 +186,21 @@ const Product_Manage = () => {
           </Table>
 
           <Modal show={showModal} onHide={() => {resetForm(); setShowModal(false)}} size="lg">
-            <Modal.Header closeButton>
-              <Modal.Title>{isEditing ? 'Edit Product' : 'Add New Product'}</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form onSubmit={handleSubmit} encType="multipart/form-data">
-                <Form.Group className="mb-3">
-                  <Form.Label>Product Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={product.name}
-                    onChange={(e) => setProduct({ ...product, name: e.target.value })}
-                  />
-                </Form.Group>
+  <Modal.Header closeButton>
+    <Modal.Title>{isEditing ? 'Edit Product' : 'Add New Product'}</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <Form onSubmit={handleSubmit} encType="multipart/form-data">
+      <Form.Group className="mb-3">
+        <Form.Label>Product Name</Form.Label>
+        <Form.Control
+          type="text"
+          value={product.name}
+          onChange={(e) => setProduct({ ...product, name: e.target.value })}
+          placeholder="Enter product name"
+          required
+        />
+      </Form.Group>
 
                 <Form.Group className="mb-3">
                   <Form.Label>Category</Form.Label>
@@ -210,6 +233,18 @@ const Product_Manage = () => {
                     onChange={(e) => setProduct({ ...product, allowCustomSize: e.target.checked })}
                   />
                 </Form.Group>
+                {product.allowCustomSize && (
+              <Form.Group className="mb-3">
+                <Form.Label>Price per Meter (රු)</Form.Label>
+                <Form.Control
+                  type="number"
+                  step="0.01"
+                  value={product.perMeterPrice}
+                  onChange={(e) => setProduct({ ...product, perMeterPrice: parseFloat(e.target.value) })}
+                  placeholder="Enter price per meter"
+                />
+              </Form.Group>
+            )}
 
                 <Row className="mb-3">
                   <Col><Form.Control placeholder="Size" value={sizeInput.size} onChange={(e) => setSizeInput({ ...sizeInput, size: e.target.value })} /></Col>
@@ -221,15 +256,41 @@ const Product_Manage = () => {
                   <div key={i}>{s.size} - ${s.price}</div>
                 ))}
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Product Images</Form.Label>
-                  <Form.Control
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={(e) => setImages([...e.target.files])}
-                  />
-                </Form.Group>
+<Form.Group className="mb-3">
+  <Form.Label>Product Images</Form.Label>
+  {existingImages.length > 0 && (
+    <div className="mb-3">
+      <p>Existing Images:</p>
+      <div className="d-flex gap-2 mb-2">
+        {existingImages.map((img, index) => (
+          <div key={index} className="position-relative">
+            <img
+              src={img.url}
+              alt={img.altText}
+              style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+            />
+            <Button
+              variant="danger"
+              size="sm"
+              className="position-absolute top-0 end-0"
+              onClick={() => {
+                setExistingImages(existingImages.filter((_, i) => i !== index));
+              }}
+            >
+              ×
+            </Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+  <Form.Control
+    type="file"
+    multiple
+    accept="image/*"
+    onChange={(e) => setImages([...e.target.files])}
+  />
+</Form.Group>
 
                 <Button type="submit" variant="primary" className="w-100">
                   {isEditing ? 'Update Product' : 'Save Product'}

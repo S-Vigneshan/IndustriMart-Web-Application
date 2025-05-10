@@ -2,6 +2,7 @@ const Product = require('../models/product');
 const Category = require('../models/category');
 const multer = require('multer');
 const path = require('path');
+const { log } = require('console');
 
 exports.createProduct = async (req, res) => {
   try {
@@ -52,35 +53,55 @@ exports.deleteProduct = async (req, res) => {
     }
     res.json({ message: 'Product deleted successfully' });
   } catch (error) {
+    
     res.status(500).json({ message: error.message });
   }
 };
 
 exports.updateProduct = async (req, res) => {
   try {
-    if (typeof req.body.defaultSizes === 'string') {
-      req.body.defaultSizes = JSON.parse(req.body.defaultSizes);
-    }
-    req.body.allowCustomSize = req.body.allowCustomSize === 'true';
+    const updateData = { ...req.body };
 
+    // Parse defaultSizes
+    if (typeof updateData.defaultSizes === 'string') {
+      updateData.defaultSizes = JSON.parse(updateData.defaultSizes);
+    }
+
+    // Parse existing images
+    if (typeof updateData.existingImages === 'string') {
+      updateData.images = JSON.parse(updateData.existingImages);
+    }
+
+    // Convert boolean and number fields
+    updateData.allowCustomSize = updateData.allowCustomSize === 'true';
+    updateData.perMeterPrice = updateData.allowCustomSize ? Number(updateData.perMeterPrice) : 0;
+
+    // Handle new images
     if (req.files && req.files.length > 0) {
-      req.body.images = req.files.map(file => ({
+      const newImages = req.files.map(file => ({
         url: `http://localhost:5000/uploads/${file.filename}`,
         altText: file.originalname
       }));
+      
+      updateData.images = [...(updateData.images || []), ...newImages];
     }
 
-    const product = await Product.findByIdAndUpdate(
+    const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
-      req.body,
-      { new: true }
+      updateData,
+      { new: true, runValidators: true }
     ).populate('category');
-    
-    if (!product) {
+
+    if (!updatedProduct) {
       return res.status(404).json({ message: 'Product not found' });
     }
-    res.json(product);
+
+    res.json(updatedProduct);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Update error:', error);
+    res.status(500).json({ 
+      message: 'Error updating product',
+      error: error.message 
+    });
   }
 };

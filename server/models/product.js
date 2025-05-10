@@ -7,6 +7,7 @@ const productSchema = new mongoose.Schema({
     size: String,
     price: Number
   }],
+  perMeterPrice: { type: Number, default: 0 },
   allowCustomSize: { type: Boolean, default: false },
   images: [{ 
     url: String,
