@@ -4,7 +4,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const WebSocket = require('ws');
 const authRoutes = require("./routes/auth");
 const otpRoutes = require("./routes/forgotPass");
 const adminRoutes = require("./routes/admin");
@@ -54,19 +53,4 @@ mongoose
   .catch((err) => console.log("MongoDB connection error:", err));
 
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-// Create WebSocket server
-const wss = new WebSocket.Server({ server });
-
-wss.on('connection', (ws) => {
-  console.log('New WebSocket connection');
-
-  ws.on('message', (message) => {
-    console.log('Received:', message);
-  });
-
-  ws.on('close', () => {
-    console.log('Client disconnected');
-  });
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
