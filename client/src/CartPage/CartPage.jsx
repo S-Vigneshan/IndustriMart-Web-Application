@@ -26,7 +26,7 @@ const CartPage = () => {
                 <div>
                   <h4>{item.name}</h4>
                   <p>Size: {item.variation.size}</p>
-                  <p>Price: ${item.variation.price}</p>
+                  <p>Price: රු. {item.variation.price}</p>
                   <label>
                     Quantity:
                     <input
@@ -36,7 +36,7 @@ const CartPage = () => {
                       onChange={(e) => updateCartQuantity(item.id, Number(e.target.value))} // Convert input to number
                     />
                   </label>
-                  <p>Total Price: ${(item.variation.price * item.quantity).toFixed(2)}</p>
+                  <p>Total Price: රු. {(item.variation.price * item.quantity).toFixed(2)}</p>
                   <button onClick={() => removeFromCart(item.id)}>Remove</button>
                 </div>
               </li>
@@ -45,7 +45,7 @@ const CartPage = () => {
 
           {/* Grand Total */}
           <div className="cart-total">
-            <h3>Grand Total: ${calculateTotal()}</h3>
+            <h3>Grand Total: රු. {calculateTotal()}</h3>
           </div>
 
           {/* Checkout Button */}

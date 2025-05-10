@@ -3,13 +3,22 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import "./ProductDetails.css";
 
+// Unit conversion constants
+const UNIT_CONVERSIONS = {
+  meters: 1,
+  centimeters: 0.01,
+  inches: 0.0254,
+  feet: 0.3048
+};
+
 const ProductDetails = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
   const [customSize, setCustomSize] = useState("");
+  const [selectedUnit, setSelectedUnit] = useState("meters");
   const [selectedSize, setSelectedSize] = useState("");
-  const [selectedPrice, setSelectedPrice] = useState(0);
+  const [calculatedPrice, setCalculatedPrice] = useState(0);
 
   if (!state || !state.product) {
     navigate("/");
@@ -18,92 +27,130 @@ const ProductDetails = () => {
 
   const { product } = state;
 
-  const handleSizeChange = (e) => {
-    const selected = e.target.value;
-    setSelectedSize(selected);
-    setCustomSize(""); // Reset custom size when selecting preset size
-    
-    // Find the corresponding price for the selected size
-    const sizeObj = product.defaultSizes.find(s => s.size === selected);
-    setSelectedPrice(sizeObj ? sizeObj.price : 0);
+  const calculatePrice = (size, unit) => {
+    if (!size || !product.perMeterPrice) return 0;
+    const sizeInMeters = parseFloat(size) * UNIT_CONVERSIONS[unit];
+    return sizeInMeters * product.perMeterPrice;
   };
 
+  const handleSizeSelect = (e) => {
+    const value = e.target.value;
+    setSelectedSize(value);
+    setCustomSize("");
+    
+    if (value) {
+      const selectedSizeObj = product.defaultSizes.find(s => s.size === value);
+      if (selectedSizeObj) {
+        setCalculatedPrice(selectedSizeObj.price);
+      } else {
+        setCalculatedPrice(0);
+      }
+    } else {
+      setCalculatedPrice(0);
+    }
+  };
   const handleCustomSizeChange = (e) => {
-    setCustomSize(e.target.value);
+    const value = e.target.value;
+    setCustomSize(value);
     setSelectedSize("custom");
-    // Use the price of the largest default size for custom sizes
-    const maxPriceSize = product.defaultSizes.reduce((prev, curr) => 
-      prev.price > curr.price ? prev : curr
-    );
-    setSelectedPrice(maxPriceSize.price);
+    const price = calculatePrice(value, selectedUnit);
+    setCalculatedPrice(price);
+  };
+
+  const handleUnitChange = (e) => {
+    const newUnit = e.target.value;
+    setSelectedUnit(newUnit);
+    if (customSize) {
+      const price = calculatePrice(customSize, newUnit);
+      setCalculatedPrice(price);
+    }
   };
 
   const handleAddToCart = () => {
-    if ((!selectedSize && !customSize) || (selectedSize === "custom" && !customSize)) {
+    if (!selectedSize || (selectedSize === "custom" && !customSize)) {
       alert("Please select or enter a size");
       return;
     }
 
-    addToCart({
+    const cartItem = {
       id: product._id,
       name: product.name,
-      image: product.images && product.images[0] ? product.images[0].url : '',
-      variation: { 
-        size: selectedSize === "custom" ? customSize : selectedSize, 
-        price: selectedPrice 
+      image: product.images?.[0]?.url || '',
+      variation: {
+        size: selectedSize === "custom" ? `${customSize} ${selectedUnit}` : selectedSize,
+        price: selectedSize === "custom" ? calculatedPrice : product.defaultSizes.find(s => s.size === selectedSize)?.price
       },
       quantity: 1,
-    });
+    };
 
+    addToCart(cartItem);
     navigate("/cart");
   };
 
   return (
     <div className="product-details-container">
-      <h1>Product Details</h1>
       <div className="product-details-card">
-        <img 
-          src={product.images && product.images[0] ? product.images[0].url : ''} 
-          alt={product.name} 
-          className="product-image" 
-        />
-        <h2>{product.name}</h2>
-        <p>{product.description}</p>
+        {/* ...existing image and description... */}
         
         <div className="size-selection">
-          <h3>Select Size:</h3>
+          <h3>Standard Sizes:</h3>
           <select
             value={selectedSize}
-            onChange={handleSizeChange}
+            onChange={handleSizeSelect}
           >
             <option value="">-- Select a Size --</option>
             {product.defaultSizes.map((sizeObj) => (
               <option key={sizeObj.size} value={sizeObj.size}>
-                {sizeObj.size} - Rs. {sizeObj.price}
+                {sizeObj.size} - රු {sizeObj.price.toFixed(2)}
               </option>
             ))}
           </select>
 
+          {selectedSize && !customSize && (
+            <div className="calculated-price">
+              <p>Selected Size Price: රු {calculatedPrice.toFixed(2)}</p>
+            </div>
+          )}
+
           {product.allowCustomSize && (
-            <div className="custom-size-input">
-              <h3>Or Enter Custom Size:</h3>
-              <input
-                type="text"
-                value={customSize}
-                onChange={handleCustomSizeChange}
-                placeholder="Enter your custom size"
-              />
+            <div className="custom-size-section">
+              <h3>Custom Size:</h3>
+              <div className="custom-size-inputs">
+                <input
+                  type="number"
+                  value={customSize}
+                  onChange={handleCustomSizeChange}
+                  placeholder="Enter size"
+                  step="0.01"
+                  min="0"
+                />
+                <select 
+                  value={selectedUnit} 
+                  onChange={handleUnitChange}
+                >
+                  <option value="meters">Meters</option>
+                  <option value="centimeters">Centimeters</option>
+                  <option value="inches">Inches</option>
+                  <option value="feet">Feet</option>
+                </select>
+              </div>
+              {customSize && (
+                <div className="calculated-price">
+                  <p>Custom Size Price: රු {calculatedPrice.toFixed(2)}</p>
+                  <p className="conversion-info">
+                    ({customSize} {selectedUnit} = {(customSize * UNIT_CONVERSIONS[selectedUnit]).toFixed(2)} meters)
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>
 
-        {selectedSize && (
-          <p className="selected-price">
-            Selected Price: Rs. {selectedPrice}
-          </p>
-        )}
-
-        <button className="add-to-cart-btn" onClick={handleAddToCart}>
+        <button 
+          className="add-to-cart-btn" 
+          onClick={handleAddToCart}
+          disabled={!selectedSize || (selectedSize === "custom" && !customSize)}
+        >
           Add to Cart
         </button>
       </div>
