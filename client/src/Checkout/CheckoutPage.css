@@ -1,0 +1,24 @@
+.checkout-page {
+    margin-top: 2rem;
+  }
+  
+  .order-summary {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+  }
+  
+  .order-item {
+    border-bottom: 1px solid #dee2e6;
+    padding: 1rem 0;
+  }
+  
+  .item-details {
+    margin-bottom: 1rem;
+  }
+  
+  .total-amount {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 2px solid #dee2e6;
+  }

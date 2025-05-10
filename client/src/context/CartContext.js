@@ -34,9 +34,22 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-  return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateCartQuantity }}>
-      {children}
-    </CartContext.Provider>
-  );
+    // Add calculateTotal function to the context
+    const calculateTotal = () => {
+      return cartItems.reduce((acc, item) => 
+        acc + item.variation.price * item.quantity, 0
+      ).toFixed(2);
+    };
+
+    return (
+      <CartContext.Provider value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        updateCartQuantity,
+        calculateTotal
+      }}>
+        {children}
+      </CartContext.Provider>
+    );
 };

@@ -4,13 +4,9 @@ import './CartPage.css';
 import { useNavigate } from 'react-router-dom';
 
 const CartPage = () => {
-  const { cartItems, removeFromCart, updateCartQuantity } = useContext(CartContext);
+  const { cartItems, removeFromCart, updateCartQuantity, calculateTotal } = useContext(CartContext);
   const navigate = useNavigate();
 
-  // Calculate the grand total price of all items in the cart
-  const calculateTotal = () => {
-    return cartItems.reduce((acc, item) => acc + item.variation.price * item.quantity, 0).toFixed(2);
-  };
 
   return (
     <div className="cart-page">
