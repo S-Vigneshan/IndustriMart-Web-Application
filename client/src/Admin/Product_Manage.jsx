@@ -12,7 +12,7 @@ const Product_Manage = () => {
     defaultSizes: [],
     perMeterPrice: 0,
   });
-  const [sizeInput, setSizeInput] = useState({ size: '', price: '' });
+  const [sizeInput, setSizeInput] = useState({ size: '', price: '',stock: '' });
   const [images, setImages] = useState([]);
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
@@ -41,12 +41,15 @@ const Product_Manage = () => {
     if (sizeInput.size && sizeInput.price) {
       setProduct(prev => ({
         ...prev,
-        defaultSizes: [...prev.defaultSizes, sizeInput]
+        defaultSizes: [...prev.defaultSizes, {
+          size: sizeInput.size,
+          price: parseFloat(sizeInput.price),
+          stock: parseInt(sizeInput.stock) || 0
+        }]
       }));
-      setSizeInput({ size: '', price: '' });
+      setSizeInput({ size: '', price: '', stock: '' }); // Reset all fields
     }
   };
-
   const handleEdit = (product) => {
     if (!product || !product._id) {
       console.error('Invalid product data');
@@ -246,15 +249,53 @@ const Product_Manage = () => {
               </Form.Group>
             )}
 
-                <Row className="mb-3">
-                  <Col><Form.Control placeholder="Size" value={sizeInput.size} onChange={(e) => setSizeInput({ ...sizeInput, size: e.target.value })} /></Col>
-                  <Col><Form.Control placeholder="Price" type="number" value={sizeInput.price} onChange={(e) => setSizeInput({ ...sizeInput, price: e.target.value })} /></Col>
-                  <Col><Button onClick={handleAddSize}>Add Size</Button></Col>
-                </Row>
+<Row className="mb-3">
+  <Col>
+    <Form.Control 
+      placeholder="Size" 
+      value={sizeInput.size} 
+      onChange={(e) => setSizeInput({ ...sizeInput, size: e.target.value })} 
+    />
+  </Col>
+  <Col>
+    <Form.Control 
+      placeholder="Price" 
+      type="number" 
+      value={sizeInput.price} 
+      onChange={(e) => setSizeInput({ ...sizeInput, price: e.target.value })} 
+    />
+  </Col>
+  <Col>
+    <Form.Control 
+      placeholder="Stock" 
+      type="number" 
+      min="0"
+      value={sizeInput.stock} 
+      onChange={(e) => setSizeInput({ ...sizeInput, stock: parseInt(e.target.value) || 0 })} 
+    />
+  </Col>
+  <Col>
+    <Button onClick={handleAddSize}>Add Size</Button>
+  </Col>
+</Row>
 
-                {product.defaultSizes.map((s, i) => (
-                  <div key={i}>{s.size} - ${s.price}</div>
-                ))}
+{product.defaultSizes.map((s, i) => (
+  <div key={i} className="d-flex justify-content-between align-items-center mb-2">
+    <span>Size: {s.size} - Price: ${s.price} - Stock: {s.stock}</span>
+    <Button 
+      variant="danger" 
+      size="sm"
+      onClick={() => {
+        setProduct({
+          ...product,
+          defaultSizes: product.defaultSizes.filter((_, index) => index !== i)
+        });
+      }}
+    >
+      Remove
+    </Button>
+  </div>
+))}
 
 <Form.Group className="mb-3">
   <Form.Label>Product Images</Form.Label>

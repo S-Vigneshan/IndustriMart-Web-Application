@@ -5,7 +5,9 @@ const productSchema = new mongoose.Schema({
   description: { type: String },
   defaultSizes: [{ 
     size: String,
-    price: Number
+    price: Number,
+    stock: { type: Number, default: 0 } // Add stock field
+    
   }],
   perMeterPrice: { type: Number, default: 0 },
   allowCustomSize: { type: Boolean, default: false },
