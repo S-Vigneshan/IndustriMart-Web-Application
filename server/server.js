@@ -8,6 +8,7 @@ const authRoutes = require("./routes/auth");
 const otpRoutes = require("./routes/forgotPass");
 const adminRoutes = require("./routes/admin");
 const path = require('path');
+const orderRoutes = require('./routes/orderroute');
 
 const app = express();
 
@@ -29,7 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use("/api", authRoutes);
 app.use("/api", otpRoutes);
 app.use("/api/admin", adminRoutes);
-
+app.use('/api/orders', orderRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

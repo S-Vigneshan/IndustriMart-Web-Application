@@ -22,3 +22,31 @@
     padding-top: 1rem;
     border-top: 2px solid #dee2e6;
   }
+  .payment-method {
+    border-top: 1px solid #dee2e6;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+  
+  .payment-options {
+    margin-top: 0.5rem;
+  }
+  
+  .payment-options .form-check {
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .payment-options .form-check:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .payment-options .form-check-input:checked + .form-check-label {
+    font-weight: 600;
+  }
+  
+  .payment-info {
+    font-size: 0.9rem;
+  }

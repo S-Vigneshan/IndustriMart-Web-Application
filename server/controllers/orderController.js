@@ -2,11 +2,11 @@ const Order = require('../models/order');
 
 exports.createOrder = async (req, res) => {
   try {
-    const { items, shippingDetails, totalAmount, userId } = req.body;
+    const { items, shippingDetails, totalAmount, payment } = req.body;
 
     // Create new order
     const order = new Order({
-      user: userId,
+      user: req.body.userId || '645e2309b45a6145c8820d8d', // Temporary default user ID
       items: items.map(item => ({
         productId: item.id,
         name: item.name,
@@ -16,7 +16,7 @@ exports.createOrder = async (req, res) => {
       shippingDetails,
       totalAmount,
       payment: {
-        method: 'Cash on Delivery', // Default payment method
+        method: payment.method,
         status: 'Pending'
       }
     });
@@ -36,5 +36,32 @@ exports.createOrder = async (req, res) => {
       message: 'Error creating order',
       error: error.message
     });
+  }
+};
+
+exports.verifyPayment = async (req, res) => {
+  try {
+    const { order_id, payment_id, payhere_amount, payhere_currency, status_code } = req.body;
+
+    // Verify the payment with PayHere status code
+    if (status_code === 2) {
+      // Payment successful
+      await Order.findByIdAndUpdate(order_id, {
+        'payment.status': 'Completed',
+        'payment.orderId': payment_id
+      });
+
+      res.status(200).json({ success: true });
+    } else {
+      // Payment failed
+      await Order.findByIdAndUpdate(order_id, {
+        'payment.status': 'Failed'
+      });
+
+      res.status(400).json({ success: false });
+    }
+  } catch (error) {
+    console.error('Payment verification error:', error);
+    res.status(500).json({ success: false, error: error.message });
   }
 };
