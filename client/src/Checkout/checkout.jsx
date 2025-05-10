@@ -1,4 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
+import { PAYHERE_CONFIG } from '../config/payhere';
+import CryptoJS from 'crypto-js'; // You'll need to install this package
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { CartContext } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
@@ -72,14 +74,13 @@ const CheckoutPage = () => {
         items: cartItems,
         shippingDetails,
         totalAmount: calculateTotal(),
-        userId: userId, // Use the actual user ID
+        userId: userId,
         payment: {
           method: 'Online',
           status: 'Pending'
         }
       };
   
-      // Make sure your backend URL is correct
       const response = await axios.post('http://localhost:5000/api/orders', orderData);
       const orderId = response.data.orderId;
   
@@ -87,17 +88,13 @@ const CheckoutPage = () => {
         throw new Error('Order ID not received from server');
       }
   
-      // Configure PayHere payment object
-      const payment = {
-        sandbox: true,
-        merchant_id: "1230412",
-        return_url: `${window.location.origin}/order-confirmation/${orderId}`,
-        cancel_url: `${window.location.origin}/checkout`,
-        notify_url: `${window.location.origin}/api/orders/${orderId}/verify`,
+      // Create hash of the payment data
+      const paymentData = {
+        merchant_id: PAYHERE_CONFIG.MERCHANT_ID,
         order_id: orderId,
-        items: cartItems.map(item => item.name).join(', '),
         amount: calculateTotal(),
         currency: "LKR",
+        items: cartItems.map(item => item.name).join(', '),
         first_name: shippingDetails.firstName,
         last_name: shippingDetails.lastName,
         email: shippingDetails.email,
@@ -105,6 +102,36 @@ const CheckoutPage = () => {
         address: shippingDetails.address,
         city: shippingDetails.city,
         country: "Sri Lanka",
+      };
+  
+      // Generate hash using merchant secret
+      const hash = CryptoJS.MD5(
+        PAYHERE_CONFIG.MERCHANT_ID +
+        orderId +
+        paymentData.amount +
+        paymentData.currency +
+        CryptoJS.MD5(PAYHERE_CONFIG.MERCHANT_SECRET).toString()
+      ).toString();
+  
+      // Configure PayHere payment object
+      const payment = {
+        sandbox: PAYHERE_CONFIG.SANDBOX,
+        merchant_id: PAYHERE_CONFIG.MERCHANT_ID,
+        return_url: `${window.location.origin}/order-confirmation/${orderId}`,
+        cancel_url: `${window.location.origin}/checkout`,
+        notify_url: `${window.location.origin}/api/orders/${orderId}/verify`,
+        order_id: orderId,
+        items: paymentData.items,
+        amount: paymentData.amount,
+        currency: paymentData.currency,
+        hash: hash, // Add the generated hash
+        first_name: paymentData.first_name,
+        last_name: paymentData.last_name,
+        email: paymentData.email,
+        phone: paymentData.phone,
+        address: paymentData.address,
+        city: paymentData.city,
+        country: paymentData.country,
       };
   
       // Start PayHere payment
