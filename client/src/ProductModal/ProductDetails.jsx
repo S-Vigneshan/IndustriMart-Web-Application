@@ -90,7 +90,34 @@ const ProductDetails = () => {
   return (
     <div className="product-details-container">
       <div className="product-details-card">
-        {/* ...existing image and description... */}
+        <div className="product-info">
+          <div className="product-image">
+            <img 
+              src={product.images && product.images[0] ? product.images[0].url : 'http://localhost:5000/placeholder.jpg'} 
+              alt={product.name}
+              onError={(e) => {
+                e.target.src = 'http://localhost:5000/placeholder.jpg';
+              }}
+            />
+          </div>
+          <div className="product-content">
+            <h2 className="product-name">{product.name}</h2>
+            <div className="product-category">
+              <span className="category-label">Category:</span>
+              <span className="category-name">{product.category?.name}</span>
+            </div>
+            <div className="product-description">
+              <h3>Description:</h3>
+              <p>{product.description || "No description available"}</p>
+            </div>
+            {product.perMeterPrice && (
+              <div className="base-price">
+                <span>Base Price:</span>
+                <span className="price">රු {product.perMeterPrice.toFixed(2)} per meter</span>
+              </div>
+            )}
+          </div>
+        </div>
         
         <div className="size-selection">
           <h3>Standard Sizes:</h3>
