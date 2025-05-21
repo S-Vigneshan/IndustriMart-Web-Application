@@ -93,6 +93,14 @@ const Navbar = () => {
                     <FaUserCircle className="dropdown-icon" />
                     My Profile
                   </Link>
+                  <Link 
+                    className="dropdown-item" 
+                    to="/my-orders"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    <FaShoppingCart className="dropdown-icon" />
+                    My Orders
+                  </Link>
                   <div className="dropdown-divider"></div>
                   <button 
                     className="dropdown-item" 

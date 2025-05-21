@@ -23,7 +23,7 @@ import ProductManagement from './Admin/Product_Manage';  // Changed to PascalCas
 import Category from './Admin/category'; // Add this import
 import Checkout from './Checkout/checkout'; // Add this import
 import OrderConfirmation from './Orderconfirmpage/confirmation'; // Add this import
-
+import MyOrder from './Myorders/myOrder';
 function App() {
   return (
     <CartProvider>
@@ -65,6 +65,11 @@ function App() {
             <Route path="/order-confirmation/:orderId" element={
             <ProtectedRoute>
               <OrderConfirmation />
+            </ProtectedRoute>
+          } />
+          <Route path="/my-orders" element={
+            <ProtectedRoute>
+             <MyOrder />
             </ProtectedRoute>
           } />
             

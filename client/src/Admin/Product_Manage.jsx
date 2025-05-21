@@ -280,11 +280,31 @@ const Product_Manage = () => {
 </Row>
 
 {product.defaultSizes.map((s, i) => (
-  <div key={i} className="d-flex justify-content-between align-items-center mb-2">
-    <span>Size: {s.size} - Price: ${s.price} - Stock: {s.stock}</span>
+  <div 
+    key={i} 
+    className="d-flex justify-content-between align-items-center mb-3 p-3 border rounded shadow-sm"
+    style={{
+      background: 'linear-gradient(to right, #f8f9fa, #ffffff)',
+      transition: 'all 0.2s ease-in-out'
+    }}
+    onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.01)'}
+    onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+  >
+    <div className="d-flex gap-4">
+      <span className="badge bg-primary px-3 py-2" style={{ fontSize: '0.9rem' }}>
+        Size: {s.size}
+      </span>
+      <span className="badge bg-success px-3 py-2" style={{ fontSize: '0.9rem' }}>
+        Price: රු{s.price}
+      </span>
+      <span className="badge bg-info px-3 py-2" style={{ fontSize: '0.9rem' }}>
+        Stock: {s.stock}
+      </span>
+    </div>
     <Button 
       variant="danger" 
       size="sm"
+      className="px-3"
       onClick={() => {
         setProduct({
           ...product,
@@ -296,7 +316,6 @@ const Product_Manage = () => {
     </Button>
   </div>
 ))}
-
 <Form.Group className="mb-3">
   <Form.Label>Product Images</Form.Label>
   {existingImages.length > 0 && (

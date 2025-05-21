@@ -6,6 +6,8 @@ const orderController = require('../controllers/orderController');
 router.post('/', orderController.createOrder);
 router.post('/:id/verify', orderController.verifyPayment);
 router.get('/:id', orderController.getOrderById); // Add this new route
+router.get('/user/:userId', orderController.getUserOrders);
+// ...existing code...
 
 
 module.exports = router;
