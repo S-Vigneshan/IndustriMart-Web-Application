@@ -24,6 +24,7 @@ import Category from './Admin/category'; // Add this import
 import Checkout from './Checkout/checkout'; // Add this import
 import OrderConfirmation from './Orderconfirmpage/confirmation'; // Add this import
 import MyOrder from './Myorders/myOrder';
+import OrderManagement from './Admin/order_Management';
 function App() {
   return (
     <CartProvider>
@@ -99,6 +100,11 @@ function App() {
             <Route path="/admin/categories" element={
               <AdminRoute>
                 <Category />  {/* Changed to PascalCase */}
+              </AdminRoute>
+            } />
+            <Route path="/admin/orders" element={
+              <AdminRoute>
+                <OrderManagement />
               </AdminRoute>
             } />
             <Route path="/admin/settings" element={
