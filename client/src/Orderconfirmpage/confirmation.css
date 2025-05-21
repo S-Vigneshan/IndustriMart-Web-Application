@@ -1,0 +1,42 @@
+.order-confirmation-card {
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 10px;
+}
+
+.success-icon {
+  color: #28a745;
+  font-size: 4rem;
+}
+
+.card {
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.list-group-item {
+  border-left: none;
+  border-right: none;
+}
+
+.list-group-item:first-child {
+  border-top: none;
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
+}
+
+.btn-primary {
+  padding: 0.75rem 2rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .order-confirmation-card {
+    margin: 0;
+  }
+}

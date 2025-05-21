@@ -5,6 +5,7 @@ const orderController = require('../controllers/orderController');
 // Create order route - remove auth middleware temporarily for testing
 router.post('/', orderController.createOrder);
 router.post('/:id/verify', orderController.verifyPayment);
+router.get('/:id', orderController.getOrderById); // Add this new route
 
 
 module.exports = router;

@@ -22,6 +22,7 @@ import UserManagement from './Admin/user';
 import ProductManagement from './Admin/Product_Manage';  // Changed to PascalCase
 import Category from './Admin/category'; // Add this import
 import Checkout from './Checkout/checkout'; // Add this import
+import OrderConfirmation from './Orderconfirmpage/confirmation'; // Add this import
 
 function App() {
   return (
@@ -61,6 +62,11 @@ function App() {
                    <Checkout />
                   </ProtectedRoute>
             } />
+            <Route path="/order-confirmation/:orderId" element={
+            <ProtectedRoute>
+              <OrderConfirmation />
+            </ProtectedRoute>
+          } />
             
             {/* Public Routes */}
             <Route path="/about" element={<AboutUsPage />} />
