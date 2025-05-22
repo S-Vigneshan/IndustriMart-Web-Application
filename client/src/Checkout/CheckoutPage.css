@@ -1,52 +1,54 @@
-.checkout-page {
-    margin-top: 2rem;
+.payment-option {
+  transition: all 0.3s ease;
+}
+
+.payment-option:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+.payment-option input:checked + label {
+  background-color: #e9ecef;
+}
+
+.form-control-lg {
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+.form-control-lg:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+.order-items {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Custom scrollbar for order items */
+.order-items::-webkit-scrollbar {
+  width: 6px;
+}
+
+.order-items::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.order-items::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.order-items::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+@media (max-width: 768px) {
+  .payment-option {
+    padding: 0.75rem !important;
   }
   
-  .order-summary {
-    background-color: #f8f9fa;
-    padding: 1.5rem;
-    border-radius: 8px;
+  .form-control-lg {
+    padding: 0.75rem;
   }
-  
-  .order-item {
-    border-bottom: 1px solid #dee2e6;
-    padding: 1rem 0;
-  }
-  
-  .item-details {
-    margin-bottom: 1rem;
-  }
-  
-  .total-amount {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 2px solid #dee2e6;
-  }
-  .payment-method {
-    border-top: 1px solid #dee2e6;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-  }
-  
-  .payment-options {
-    margin-top: 0.5rem;
-  }
-  
-  .payment-options .form-check {
-    padding: 0.5rem;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
-  }
-  
-  .payment-options .form-check:hover {
-    background-color: #f8f9fa;
-  }
-  
-  .payment-options .form-check-input:checked + .form-check-label {
-    font-weight: 600;
-  }
-  
-  .payment-info {
-    font-size: 0.9rem;
-  }
+}

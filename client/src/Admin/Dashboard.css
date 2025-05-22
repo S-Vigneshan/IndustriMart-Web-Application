@@ -1,0 +1,19 @@
+.stat-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.dashboard-content {
+  background-color: #f8f9fa;
+}
+
+.stat-icon {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

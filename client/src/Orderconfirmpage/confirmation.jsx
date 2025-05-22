@@ -1,125 +1,140 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Card, Row, Col, Button, ListGroup } from 'react-bootstrap';
+import { Container, Row, Col, Button, Spinner } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
+import { FaCheckCircle, FaBox, FaTruck} from 'react-icons/fa';
 import axios from 'axios';
 import './confirmation.css';
 
 const OrderConfirmation = () => {
   const [orderDetails, setOrderDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { orderId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch order details from backend
     const fetchOrderDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/orders${orderId}`);
+        const response = await axios.get(`http://localhost:5000/api/orders/${orderId}`);
         setOrderDetails(response.data);
       } catch (error) {
-        console.error('Error fetching order details:', error);
+        setError('Failed to load order details. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchOrderDetails();
+    if (orderId) fetchOrderDetails();
   }, [orderId]);
 
-  if (!orderDetails) {
+  if (loading) {
     return (
-      <Container className="text-center py-5">
-        <div className="spinner-border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </Container>
+      <div className="loading-container">
+        <Spinner animation="border" variant="primary" />
+        <p>Loading order details...</p>
+      </div>
     );
   }
 
-  // Calculate estimated delivery date (7 days from now)
+  if (error || !orderDetails) {
+    return (
+      <div className="error-container">
+        <h3>Oops!</h3>
+        <p>{error || "Order not found"}</p>
+        <Button variant="primary" onClick={() => navigate('/shop')}>
+          Return to Shop
+        </Button>
+      </div>
+    );
+  }
+
   const estimatedDelivery = new Date();
   estimatedDelivery.setDate(estimatedDelivery.getDate() + 7);
 
   return (
-    <Container className="py-5">
-      <Card className="order-confirmation-card">
-        <Card.Body>
-          <div className="text-center mb-4">
-            <i className="fas fa-check-circle success-icon"></i>
-            <h2 className="mt-3">Thank You!</h2>
-            <p className="lead">Your order has been placed successfully.</p>
+    <Container className="confirmation-container">
+      <div className="success-header">
+        <FaCheckCircle className="success-icon" />
+        <h1>Order Confirmed!</h1>
+        <p>Thank you for your purchase. Your order has been successfully placed.</p>
+        <div className="order-id">Order ID: #{orderId}</div>
+      </div>
+
+      <div className="order-status-timeline">
+        <div className="status-item active">
+          <FaCheckCircle />
+          <p>Order Placed</p>
+        </div>
+        <div className="status-item">
+          <FaBox />
+          <p>Processing</p>
+        </div>
+        <div className="status-item">
+          <FaTruck />
+          <p>Shipping</p>
+        </div>
+        <div className="status-item">
+          <FaCheckCircle />
+          <p>Delivered</p>
+        </div>
+      </div>
+
+      <Row className="order-details">
+        <Col md={6} className="mb-4">
+          <div className="details-section">
+            <h3>Delivery Details</h3>
+            <div className="details-content">
+              <p className="recipient-name">
+                {orderDetails.shippingDetails.firstName} {orderDetails.shippingDetails.lastName}
+              </p>
+              <p>{orderDetails.shippingDetails.address}</p>
+              <p>{orderDetails.shippingDetails.city}</p>
+              <p>Phone: {orderDetails.shippingDetails.phone}</p>
+              <p>Email: {orderDetails.shippingDetails.email}</p>
+            </div>
           </div>
+        </Col>
 
-          <Row className="mb-4">
-            <Col md={6}>
-              <Card className="h-100">
-                <Card.Body>
-                  <h4>Order Information</h4>
-                  <p><strong>Order ID:</strong> #{orderId}</p>
-                  <p><strong>Order Date:</strong> {new Date().toLocaleDateString()}</p>
-                  <p><strong>Estimated Delivery:</strong> {estimatedDelivery.toLocaleDateString('en-US', { 
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}</p>
-                  <p><strong>Payment Method:</strong> {orderDetails.payment.method}</p>
-                </Card.Body>
-              </Card>
-            </Col>
-
-            <Col md={6}>
-              <Card className="h-100">
-                <Card.Body>
-                  <h4>Delivery Address</h4>
-                  <p>{orderDetails.shippingDetails.firstName} {orderDetails.shippingDetails.lastName}</p>
-                  <p>{orderDetails.shippingDetails.address}</p>
-                  <p>{orderDetails.shippingDetails.city}</p>
-                  <p>Phone: {orderDetails.shippingDetails.phone}</p>
-                  <p>Email: {orderDetails.shippingDetails.email}</p>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-
-          <Card className="mb-4">
-            <Card.Body>
-              <h4>Order Summary</h4>
-              <ListGroup variant="flush">
+        <Col md={6} className="mb-4">
+          <div className="details-section">
+            <h3>Order Summary</h3>
+            <div className="details-content">
+              <div className="order-items">
                 {orderDetails.items.map((item, index) => (
-                  <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
-                    <div>
-                      <h6 className="mb-0">{item.name}</h6>
-                      <small>Quantity: {item.quantity}</small>
+                  <div key={index} className="order-item">
+                    <div className="item-details">
+                      <h6>{item.name}</h6>
+                      <span className="quantity">x{item.quantity}</span>
                     </div>
-                    <span>රු {item.price.toFixed(2)}</span>
-                  </ListGroup.Item>
+                    <span className="price">රු {item.price.toFixed(2)}</span>
+                  </div>
                 ))}
-                <ListGroup.Item className="d-flex justify-content-between align-items-center fw-bold">
-                  <span>Total Amount</span>
-                  <span>රු {orderDetails.totalAmount.toFixed(2)}</span>
-                </ListGroup.Item>
-              </ListGroup>
-            </Card.Body>
-          </Card>
-
-          <Card className="mb-4">
-            <Card.Body className="text-center">
-              <h5>Need Help?</h5>
-              <p>For any questions about your order, please contact our support team</p>
-              <p>Email: support@example.com</p>
-              <p>Or visit our <Button variant="link" onClick={() => navigate('/contact')}>Contact Us</Button> page</p>
-            </Card.Body>
-          </Card>
-
-          <div className="text-center">
-            <Button 
-              variant="primary" 
-              size="lg"
-              onClick={() => navigate('/shop')}
-            >
-              Continue Shopping
-            </Button>
+              </div>
+              <div className="total-amount">
+                <span>Total Amount</span>
+                <span>රු {orderDetails.totalAmount.toFixed(2)}</span>
+              </div>
+            </div>
           </div>
-        </Card.Body>
-      </Card>
+        </Col>
+      </Row>
+
+      <div className="delivery-info">
+        <h3>Estimated Delivery</h3>
+        <p>{estimatedDelivery.toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })}</p>
+      </div>
+
+      <div className="actions">
+        <Button variant="primary" size="lg" onClick={() => navigate('/shop')}>
+          Continue Shopping
+        </Button>
+        
+      </div>
     </Container>
   );
 };

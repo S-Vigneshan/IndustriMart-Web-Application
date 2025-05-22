@@ -4,6 +4,7 @@ import CryptoJS from 'crypto-js'; // You'll need to install this package
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { CartContext } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import { FaCreditCard, FaTruck } from 'react-icons/fa';
 import axios from 'axios';
 import './CheckoutPage.css';
 
@@ -48,25 +49,33 @@ const CheckoutPage = () => {
   };
 
   const handleCashOnDelivery = async () => {
-    try {
-      const orderData = {
-        items: cartItems,
-        shippingDetails,
-        totalAmount: calculateTotal(),
-        userId: userId, // Use the actual user ID
-        payment: {
-          method: 'COD',
-          status: 'Pending'
-        }
-      };
+  try {
+    setIsProcessing(true);
+    const orderData = {
+      items: cartItems,
+      shippingDetails,
+      totalAmount: calculateTotal(),
+      userId: userId,
+      payment: {
+        method: 'COD',
+        status: 'Pending'
+      }
+    };
 
-      const response = await axios.post('http://localhost:5000/api/orders', orderData);
-      navigate(`/order-confirmation/${response.data.orderId}`);
-    } catch (error) {
-      console.error('Error creating order:', error);
-      alert('Failed to create order. Please try again.');
-    }
-  };
+    const response = await axios.post('http://localhost:5000/api/orders', orderData);
+    
+    // Clear cart after successful order
+    localStorage.removeItem('cart');
+    
+    // Navigate to order confirmation with the new order ID
+    navigate(`/order-confirmation/${response.data.orderId}`);
+  } catch (error) {
+    console.error('Error creating order:', error);
+    alert('Failed to create order. Please try again.');
+  } finally {
+    setIsProcessing(false);
+  }
+};
 
   const handleOnlinePayment = async () => {
     try {
@@ -162,144 +171,170 @@ const CheckoutPage = () => {
   };
 
   return (
-    <Container className="checkout-page py-5">
-      <Row>
-        <Col md={7}>
-          <h2>Shipping Details</h2>
-          <Form onSubmit={handleSubmit}>
-            <Row>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label>First Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="firstName"
-                    value={shippingDetails.firstName}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Last Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="lastName"
-                    value={shippingDetails.lastName}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={shippingDetails.email}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Phone</Form.Label>
-              <Form.Control
-                type="tel"
-                name="phone"
-                value={shippingDetails.phone}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>Address</Form.Label>
-              <Form.Control
-                type="text"
-                name="address"
-                value={shippingDetails.address}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>City</Form.Label>
-              <Form.Control
-                type="text"
-                name="city"
-                value={shippingDetails.city}
-                onChange={handleInputChange}
-                required
-              />
-            </Form.Group>
-
-            <Button type="submit" variant="primary">Place Order</Button>
-          </Form>
+    <Container className="py-5">
+      <Row className="g-4">
+        <Col lg={7}>
+          <div className="bg-white p-4 rounded-3 shadow-sm">
+            <h2 className="mb-4 border-bottom pb-3">Shipping Details</h2>
+            <Form onSubmit={handleSubmit}>
+              <Row className="g-3">
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label>First Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="firstName"
+                      value={shippingDetails.firstName}
+                      onChange={handleInputChange}
+                      required
+                      className="form-control-lg"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label>Last Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="lastName"
+                      value={shippingDetails.lastName}
+                      onChange={handleInputChange}
+                      required
+                      className="form-control-lg"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={12}>
+                  <Form.Group>
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
+                      type="email"
+                      name="email"
+                      value={shippingDetails.email}
+                      onChange={handleInputChange}
+                      required
+                      className="form-control-lg"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={12}>
+                  <Form.Group>
+                    <Form.Label>Phone</Form.Label>
+                    <Form.Control
+                      type="tel"
+                      name="phone"
+                      value={shippingDetails.phone}
+                      onChange={handleInputChange}
+                      required
+                      className="form-control-lg"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={12}>
+                  <Form.Group>
+                    <Form.Label>Address</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      name="address"
+                      value={shippingDetails.address}
+                      onChange={handleInputChange}
+                      required
+                      className="form-control-lg"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={12}>
+                  <Form.Group>
+                    <Form.Label>City</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="city"
+                      value={shippingDetails.city}
+                      onChange={handleInputChange}
+                      required
+                      className="form-control-lg"
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+            </Form>
+          </div>
         </Col>
 
-        <Col md={5}>
-          <div className="order-summary">
-            <h2>Order Summary</h2>
-            {cartItems.map((item) => (
-              <div key={item.id} className="order-item">
-                <div className="item-details">
-                  <h5>{item.name}</h5>
-                  <p>Quantity: {item.quantity}</p>
-                  <p>Price: රු. {item.variation.price}</p>
-                  <p>Subtotal: රු. {(item.variation.price * item.quantity).toFixed(2)}</p>
+        <Col lg={5}>
+          <div className="bg-white p-4 rounded-3 shadow-sm">
+            <h2 className="mb-4 border-bottom pb-3">Order Summary</h2>
+            <div className="order-items">
+              {cartItems.map((item) => (
+                <div key={item.id} className="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded">
+                  <div>
+                    <h6 className="mb-0">{item.name}</h6>
+                    <small className="text-muted">Quantity: {item.quantity}</small>
+                  </div>
+                  <div className="text-end">
+                    <div>රු {item.variation.price}</div>
+                    <small className="text-muted">රු {(item.variation.price * item.quantity).toFixed(2)}</small>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="border-top pt-3 mt-4">
+              <h4 className="d-flex justify-content-between">
+                <span>Total</span>
+                <span>රු {calculateTotal()}</span>
+              </h4>
+
+              <div className="payment-options mt-4">
+                <h5 className="mb-3">Payment Method</h5>
+                <div className="d-grid gap-2">
+                  <Form.Check
+                    type="radio"
+                    id="cod"
+                    name="paymentMethod"
+                    className="payment-option p-3 border rounded"
+                    label={
+                      <div className="d-flex align-items-center">
+                        <FaTruck className="me-2" />
+                        <span>Cash on Delivery</span>
+                      </div>
+                    }
+                    value="cod"
+                    checked={shippingDetails.paymentMethod === 'cod'}
+                    onChange={handleInputChange}
+                  />
+                  <Form.Check
+                    type="radio"
+                    id="online"
+                    name="paymentMethod"
+                    className="payment-option p-3 border rounded"
+                    label={
+                      <div className="d-flex align-items-center">
+                        <FaCreditCard className="me-2" />
+                        <span>Online Payment</span>
+                      </div>
+                    }
+                    value="online"
+                    checked={shippingDetails.paymentMethod === 'online'}
+                    onChange={handleInputChange}
+                  />
                 </div>
               </div>
-            ))}
-            <div className="total-amount">
-  <h4>Total Amount: රු. {calculateTotal()}</h4>
-  
-  <Form.Group className="payment-method mt-4">
-    <Form.Label><strong>Select Payment Method</strong></Form.Label>
-    <div className="payment-options">
-      <Form.Check
-        type="radio"
-        id="cod"
-        name="paymentMethod"
-        label="Cash on Delivery"
-        value="cod"
-        checked={shippingDetails.paymentMethod === 'cod'}
-        onChange={handleInputChange}
-        className="mb-2"
-      />
-      <Form.Check
-        type="radio"
-        id="online"
-        name="paymentMethod"
-        label="Online Payment"
-        value="online"
-        checked={shippingDetails.paymentMethod === 'online'}
-        onChange={handleInputChange}
-      />
-    </div>
 
-    {shippingDetails.paymentMethod === 'online' && (
-      <div className="payment-info alert alert-info mt-3">
-        <small>You will be redirected to the payment gateway after placing your order.</small>
-      </div>
-    )}
-  </Form.Group>
-</div>
+              <Button
+                variant="primary"
+                size="lg"
+                className="w-100 mt-4"
+                onClick={handleSubmit}
+                disabled={isProcessing}
+              >
+                {isProcessing ? 'Processing...' : 'Place Order'}
+              </Button>
+            </div>
           </div>
         </Col>
       </Row>
-      {/* Update the submit button */}
-      <Button 
-        type="submit" 
-        variant="primary" 
-        disabled={isProcessing}
-      >
-        {isProcessing ? 'Processing...' : 'Confirm Order'}
-      </Button>
     </Container>
   );
 };
