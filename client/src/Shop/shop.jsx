@@ -48,6 +48,7 @@ const ShopPage = () => {
   const handleSearch = () => {
     // The filtering will happen automatically through filteredProducts
   };
+  
 
   // Apply filters and sorting
   const filteredProducts = products
@@ -69,8 +70,8 @@ const ShopPage = () => {
     });
 
   const handleViewDetails = (product) => {
-    navigate(`/product/${product.id}`, { state: { product } });
-  };
+  navigate(`/product/${product._id}`, { state: { product } });
+};
 
   return (
     <div className="shop-container">
