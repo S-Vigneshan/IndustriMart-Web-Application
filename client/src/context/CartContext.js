@@ -1,17 +1,24 @@
 import React, { createContext, useState } from 'react';
 
-// Create the Cart Context
 export const CartContext = createContext();
 
-// Cart Provider Component
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
+  const [error, setError] = useState(null);
 
-  // Add item to cart or update quantity if it already exists
   const addToCart = (product) => {
     setCartItems((prevItems) => {
       const itemExists = prevItems.find(item => item.id === product.id);
+      
       if (itemExists) {
+        // Check if adding would exceed stock
+        const selectedSize = product.variation.size;
+        const sizeObj = product.defaultSizes?.find(s => s.size === selectedSize);
+        
+        if (itemExists.quantity + 1 > sizeObj?.stock) {
+          setError(`Sorry, only ${sizeObj.stock} items available in stock`);
+          return prevItems;
+        }
         return prevItems.map(item =>
           item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
         );
@@ -20,36 +27,44 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  // Remove item from cart
-  const removeFromCart = (productId) => {
-    setCartItems((prevItems) => prevItems.filter(item => item.id !== productId));
-  };
+  const updateCartQuantity = (productId, newQuantity, maxStock) => {
+    if (newQuantity > maxStock) {
+      setError(`Sorry, only ${maxStock} items available in stock`);
+      return;
+    }
 
-  // Update item quantity in the cart
-  const updateCartQuantity = (productId, quantity) => {
     setCartItems((prevItems) =>
       prevItems.map(item =>
-        item.id === productId ? { ...item, quantity: Math.max(1, quantity) } : item
+        item.id === productId ? { ...item, quantity: Math.max(1, newQuantity) } : item
       )
     );
+    setError(null);
   };
 
-    // Add calculateTotal function to the context
-    const calculateTotal = () => {
-      return cartItems.reduce((acc, item) => 
-        acc + item.variation.price * item.quantity, 0
-      ).toFixed(2);
-    };
+  const removeFromCart = (productId) => {
+    setCartItems((prevItems) => prevItems.filter(item => item.id !== productId));
+    setError(null);
+  };
 
-    return (
-      <CartContext.Provider value={{
-        cartItems,
-        addToCart,
-        removeFromCart,
-        updateCartQuantity,
-        calculateTotal
-      }}>
-        {children}
-      </CartContext.Provider>
-    );
+  const calculateTotal = () => {
+    return cartItems.reduce((acc, item) => 
+      acc + item.variation.price * item.quantity, 0
+    ).toFixed(2);
+  };
+
+  const clearError = () => setError(null);
+
+  return (
+    <CartContext.Provider value={{
+      cartItems,
+      addToCart,
+      removeFromCart,
+      updateCartQuantity,
+      calculateTotal,
+      error,
+      clearError
+    }}>
+      {children}
+    </CartContext.Provider>
+  );
 };

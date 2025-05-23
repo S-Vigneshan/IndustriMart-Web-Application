@@ -76,6 +76,7 @@ const ProductDetails = () => {
       id: product._id,
       name: product.name,
       image: product.images?.[0]?.url || '',
+      defaultSizes: product.defaultSizes, // Add this line to pass all size data
       variation: {
         size: selectedSize === "custom" ? `${customSize} ${selectedUnit}` : selectedSize,
         price: selectedSize === "custom" ? calculatedPrice : product.defaultSizes.find(s => s.size === selectedSize)?.price
