@@ -1,32 +1,120 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { Alert } from 'react-bootstrap';
 import './contact.css';
 
 const ContactPage = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+
+  const [alert, setAlert] = useState({
+    show: false,
+    variant: '',
+    message: ''
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/contact', formData);
+      
+      setAlert({
+        show: true,
+        variant: 'success',
+        message: response.data.message
+      });
+
+      // Clear form
+      setFormData({
+        name: '',
+        email: '',
+        message: ''
+      });
+    } catch (error) {
+      setAlert({
+        show: true,
+        variant: 'danger',
+        message: error.response?.data?.message || 'Error sending message'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="contact-page">
-      {/* Contact Header */}
       <header className="contact-header">
         <h1>Contact Us</h1>
         <p>We'd love to hear from you! Reach out to us using the form below.</p>
       </header>
 
-      {/* Contact Form */}
       <section className="contact-form-section">
         <h2>Get in Touch</h2>
-        <form className="contact-form">
+        
+        {alert.show && (
+          <Alert 
+            variant={alert.variant} 
+            onClose={() => setAlert({ ...alert, show: false })} 
+            dismissible
+          >
+            {alert.message}
+          </Alert>
+        )}
+
+        <form className="contact-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="name">Name</label>
-            <input type="text" id="name" placeholder="Your Name" required />
+            <input
+              type="text"
+              id="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Your Name"
+              required
+            />
           </div>
           <div className="form-group">
             <label htmlFor="email">Email</label>
-            <input type="email" id="email" placeholder="Your Email" required />
+            <input
+              type="email"
+              id="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Your Email"
+              required
+            />
           </div>
           <div className="form-group">
             <label htmlFor="message">Message</label>
-            <textarea id="message" placeholder="Your Message" required></textarea>
+            <textarea
+              id="message"
+              value={formData.message}
+              onChange={handleChange}
+              placeholder="Your Message"
+              required
+            ></textarea>
           </div>
-          <button type="submit" className="btn-submit">Send Message</button>
+          <button 
+            type="submit" 
+            className="btn-submit"
+            disabled={loading}
+          >
+            {loading ? 'Sending...' : 'Send Message'}
+          </button>
         </form>
       </section>
 
@@ -52,10 +140,8 @@ const ContactPage = () => {
         ></iframe>
       </section>
 
-      {/* Footer */}
-      <footer className="contact-footer">
-        <p>&copy; 2024 IndustriMart. All rights reserved.</p>
-      </footer>
+      
+      
     </div>
   );
 };

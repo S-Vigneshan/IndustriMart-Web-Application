@@ -62,7 +62,8 @@ const HomePage = () => {
                       )}
                     </div>
                     <Link 
-                      to={`/shop/product/${product._id}`} 
+                      to={`/product/${product._id}`}
+                      state={{ product }}
                       className="btn btn-outline-primary"
                     >
                       View Details

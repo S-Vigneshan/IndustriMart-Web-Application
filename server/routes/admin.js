@@ -6,7 +6,9 @@ const { getAllCategories,
   updateCategory,
   deleteCategory} = require('../controllers/categoryController');
 const { 
-    getAllUsers
+    getAllUsers,
+    adminUpdateUser,
+    adminDeleteUser
     
   } = require('../controllers/userController');
 
@@ -16,7 +18,11 @@ const productController = require('../controllers/productController');
 const multer = require('multer');
 const path = require('path');
 
+// ...existing code...
+
 router.get("/users", authMiddleware, getAllUsers);
+router.put("/users/:id", authMiddleware, adminUpdateUser);
+router.delete("/users/:id", authMiddleware, adminDeleteUser);
 router.post("/categories", createCategory);  
 router.get("/categories", getAllCategories);
 router.put("/categories/:id", updateCategory);

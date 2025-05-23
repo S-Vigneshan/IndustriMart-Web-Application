@@ -205,6 +205,48 @@ const getAllUsers = async (req, res) => {
     res.status(500).json({ message: "Error fetching users" });
   }
 };
+const adminUpdateUser = async (req, res) => {
+  try {
+    const updates = {
+      name: req.body.name,
+      email: req.body.email,
+      contactNumber: req.body.contactNumber,
+      address: req.body.address
+    };
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { $set: updates },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      message: "User updated successfully",
+      user
+    });
+  } catch (error) {
+    console.error('Admin user update error:', error);
+    res.status(500).json({ message: "Error updating user" });
+  }
+};
+
+// Admin delete user
+const adminDeleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error('Admin user deletion error:', error);
+    res.status(500).json({ message: "Error deleting user" });
+  }
+};
 
 module.exports = {
   registerUser,
@@ -214,5 +256,7 @@ module.exports = {
   deleteUserProfile,
   updatePassword,
   resetPassword,
-  getAllUsers
+  getAllUsers,
+  adminUpdateUser,
+  adminDeleteUser
 };
