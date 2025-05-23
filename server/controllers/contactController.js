@@ -30,7 +30,43 @@ const createContact = async (req, res) => {
     });
   }
 };
+const getAllContacts = async (req, res) => {
+  try {
+    const contacts = await Contact.find().sort({ createdAt: -1 });
+    res.status(200).json(contacts);
+  } catch (error) {
+    console.error('Fetch contacts error:', error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching contacts"
+    });
+  }
+};
+
+const deleteContact = async (req, res) => {
+  try {
+    const contact = await Contact.findByIdAndDelete(req.params.id);
+    if (!contact) {
+      return res.status(404).json({
+        success: false,
+        message: "Contact not found"
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Contact deleted successfully"
+    });
+  } catch (error) {
+    console.error('Delete contact error:', error);
+    res.status(500).json({
+      success: false,
+      message: "Error deleting contact"
+    });
+  }
+};
 
 module.exports = {
-  createContact
+  createContact,
+  getAllContacts,
+  deleteContact
 };

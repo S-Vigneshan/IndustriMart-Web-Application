@@ -25,6 +25,7 @@ import Checkout from './Checkout/checkout'; // Add this import
 import OrderConfirmation from './Orderconfirmpage/confirmation'; // Add this import
 import MyOrder from './Myorders/myOrder';
 import OrderManagement from './Admin/order_Management';
+import Feedbacks from './Admin/feedBacks'; 
 function App() {
   return (
     <CartProvider>
@@ -112,6 +113,11 @@ function App() {
                 <Dashboard />
               </AdminRoute>
             } />
+            <Route path="/admin/feedbacks" element={
+            <AdminRoute>
+              <Feedbacks />
+            </AdminRoute>
+          } />
             
           </Routes>
         

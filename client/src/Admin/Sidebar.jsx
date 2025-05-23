@@ -29,7 +29,8 @@ const Sidebar = () => {
             { path: '/admin/users', icon: 'person-fill', label: 'Users' },
             { path: '/admin/products', icon: 'box-seam-fill', label: 'Products' },
             { path: '/admin/categories', icon: 'tags-fill', label: 'Categories' },
-            { path: '/admin/orders', icon: 'cart-check-fill', label: 'Orders' }, // Add this line
+            { path: '/admin/orders', icon: 'cart-check-fill', label: 'Orders' },
+            { path: '/admin/feedbacks',  icon: 'chat-dots-fill', label: 'Feedbacks'}, // Add this line
 
           ].map((item) => (
             <li key={item.path} className="nav-item">
