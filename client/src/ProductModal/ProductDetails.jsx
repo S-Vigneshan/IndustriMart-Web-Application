@@ -67,26 +67,28 @@ const ProductDetails = () => {
   };
 
   const handleAddToCart = () => {
-    if (!selectedSize || (selectedSize === "custom" && !customSize)) {
-      alert("Please select or enter a size");
-      return;
-    }
+  if (!selectedSize || (selectedSize === "custom" && !customSize)) {
+    alert("Please select or enter a size");
+    return;
+  }
 
-    const cartItem = {
-      id: product._id,
-      name: product.name,
-      image: product.images?.[0]?.url || '',
-      defaultSizes: product.defaultSizes, // Add this line to pass all size data
-      variation: {
-        size: selectedSize === "custom" ? `${customSize} ${selectedUnit}` : selectedSize,
-        price: selectedSize === "custom" ? calculatedPrice : product.defaultSizes.find(s => s.size === selectedSize)?.price
-      },
-      quantity: 1,
-    };
-
-    addToCart(cartItem);
-    navigate("/cart");
+  const cartItem = {
+    id: product._id,
+    name: product.name,
+    image: product.images?.[0]?.url || '',
+    defaultSizes: product.defaultSizes,
+    variation: {
+      size: selectedSize === "custom" ? `${customSize} ${selectedUnit}` : selectedSize,
+      price: selectedSize === "custom" ? calculatedPrice : product.defaultSizes.find(s => s.size === selectedSize)?.price,
+      isCustom: selectedSize === "custom"
+    },
+    quantity: 1,
   };
+
+  addToCart(cartItem);
+  navigate("/cart");
+};
+
 
   return (
     <div className="product-details-container">
