@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Form, Alert } from 'react-bootstrap';
+import { Button, Modal, Form, Alert, Container } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import axios from 'axios';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaUserCog } from 'react-icons/fa';
 
 const User = () => {
   const [users, setUsers] = useState([]);
@@ -99,79 +99,108 @@ const User = () => {
     }
   };
 
-  return (
+   return (
     <div className="d-flex">
       <Sidebar />
-      <div className="flex-grow-1 bg-light">
-        <div className="p-4">
-          <h2 className="mb-4">User Management</h2>
-          
+      <div className="flex-grow-1 min-vh-100" style={{ marginLeft: window.innerWidth >= 768 ? '280px' : '0', transition: 'margin-left 0.3s ease-in-out', background: '#f8f9fa' }}>
+        <Container fluid className="p-4">
+          {/* Header Section */}
+          <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '2rem',
+            marginBottom: '2rem',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+          }}>
+            <div className="d-flex justify-content-between align-items-center">
+              <div>
+                <h2 className="mb-1 d-flex align-items-center gap-2">
+                  <FaUserCog className="text-primary" />
+                  User Management
+                </h2>
+                <p className="text-muted mb-0">Manage your system users</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Alert Section */}
           {alert.show && (
             <Alert 
               variant={alert.variant} 
               onClose={() => setAlert({ ...alert, show: false })} 
               dismissible
+              style={{ borderRadius: '12px' }}
             >
               {alert.message}
             </Alert>
           )}
 
+          {/* Loading and Table Section */}
           {loading ? (
-            <div className="text-center">
-              <div className="spinner-border" role="status">
+            <div className="text-center p-5">
+              <div className="spinner-border text-primary" role="status">
                 <span className="visually-hidden">Loading...</span>
               </div>
             </div>
           ) : (
-            <div className="table-responsive">
-              <table className="table table-hover table-striped">
-                <thead className="table-dark">
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Contact Number</th>
-                    <th>Address</th>
-                    <th>Registered Date</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map((user) => (
-                    <tr key={user._id}>
-                      <td>{user.name}</td>
-                      <td>{user.email}</td>
-                      <td>{user.contactNumber}</td>
-                      <td>{user.address}</td>
-                      <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-                      <td>
-                        <Button 
-                          variant="outline-primary" 
-                          size="sm" 
-                          className="me-2"
-                          onClick={() => handleEdit(user)}
-                        >
-                          <FaEdit /> Edit
-                        </Button>
-                        <Button 
-                          variant="outline-danger" 
-                          size="sm"
-                          onClick={() => handleDelete(user._id)}
-                        >
-                          <FaTrash /> Delete
-                        </Button>
-                      </td>
+            <div style={{
+              background: 'white',
+              borderRadius: '16px',
+              padding: '1.5rem',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+            }}>
+              <div className="table-responsive">
+                <table className="table table-hover">
+                  <thead>
+                    <tr style={{ backgroundColor: '#f8f9fa' }}>
+                      <th scope="col">Name</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Contact Number</th>
+                      <th scope="col">Address</th>
+                      <th scope="col">Registered Date</th>
+                      <th scope="col">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {users.map((user) => (
+                      <tr key={user._id}>
+                        <td>{user.name}</td>
+                        <td>{user.email}</td>
+                        <td>{user.contactNumber}</td>
+                        <td>{user.address}</td>
+                        <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                        <td>
+                          <Button 
+                            variant="outline-primary" 
+                            size="sm" 
+                            className="me-2"
+                            style={{ borderRadius: '8px' }}
+                            onClick={() => handleEdit(user)}
+                          >
+                            <FaEdit /> Edit
+                          </Button>
+                          <Button 
+                            variant="outline-danger" 
+                            size="sm"
+                            style={{ borderRadius: '8px' }}
+                            onClick={() => handleDelete(user._id)}
+                          >
+                            <FaTrash /> Delete
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
-        </div>
+        </Container>
       </div>
 
       {/* Edit User Modal */}
       <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-        <Modal.Header closeButton>
+        <Modal.Header closeButton style={{ background: '#f8f9fa' }}>
           <Modal.Title>Edit User</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -214,10 +243,18 @@ const User = () => {
               />
             </Form.Group>
             <div className="d-flex justify-content-end gap-2">
-              <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+              <Button 
+                variant="light" 
+                onClick={() => setShowEditModal(false)}
+                style={{ borderRadius: '8px' }}
+              >
                 Cancel
               </Button>
-              <Button variant="primary" type="submit">
+              <Button 
+                variant="primary" 
+                type="submit"
+                style={{ borderRadius: '8px', backgroundColor: '#1a237e', border: 'none' }}
+              >
                 Save Changes
               </Button>
             </div>

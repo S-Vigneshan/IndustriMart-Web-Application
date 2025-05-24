@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, Form, Button, Row, Col, Table, Modal } from 'react-bootstrap';
+import {  Form, Button, Row, Col, Table, Modal } from 'react-bootstrap';
 import Sidebar from './Sidebar';
+import { FaPlus, FaEdit, FaTrash, FaBox } from 'react-icons/fa';
+
 
 const Product_Manage = () => {
   const [product, setProduct] = useState({
@@ -147,52 +149,139 @@ const Product_Manage = () => {
   return (
     <div className="d-flex">
       <Sidebar />
-      <div className="flex-grow-1">
-        <Container className="py-4">
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2>Product Management</h2>
-            <Button onClick={() => setShowModal(true)}>Add New Product</Button>
+      <div className="flex-grow-1" style={{
+        marginLeft: window.innerWidth >= 768 ? '280px' : '0',
+        transition: 'margin-left 0.3s ease-in-out',
+        background: '#f8f9fa',
+        minHeight: '100vh',
+        padding: '2rem'
+      }}>
+        {/* Header Section */}
+        <div style={{
+          background: 'white',
+          borderRadius: '16px',
+          padding: '2rem',
+          marginBottom: '2rem',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+        }}>
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              <h2 className="mb-1 d-flex align-items-center gap-2">
+                <FaBox className="text-primary" />
+                Product Management
+              </h2>
+              <p className="text-muted mb-0">Manage your product inventory</p>
+            </div>
+            <Button 
+              onClick={() => setShowModal(true)}
+              style={{
+                backgroundColor: '#1a237e',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '0.75rem 1.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}
+            >
+              <FaPlus /> Add New Product
+            </Button>
           </div>
+        </div>
 
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((prod) => (
-                <tr key={prod._id}>
-                  <td>
-                    <img 
-                      src={prod.images[0]?.url || 'http://localhost:5000/placeholder.jpg'} 
-                      alt={prod.name} 
-                      style={{ width: '100px', height: '100px', objectFit: 'cover' }}
-                    />
-                  </td>
-                  <td>{prod.name}</td>
-                  <td>{prod.category?.name}</td>
-                  <td>
-                    <Button variant="info" size="sm" className="me-2" onClick={() => handleEdit(prod)}>
-                      Edit
-                    </Button>
-                    <Button variant="danger" size="sm" onClick={() => handleDelete(prod._id)}>
-                      Delete
-                    </Button>
-                  </td>
+        {/* Products Table */}
+        <div style={{
+          background: 'white',
+          borderRadius: '16px',
+          padding: '1.5rem',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+        }}>
+          <div className="table-responsive">
+            <Table hover style={{ margin: 0 }}>
+              <thead>
+                <tr style={{ background: '#f8f9fa' }}>
+                  <th style={{ padding: '1rem' }}>Image</th>
+                  <th style={{ padding: '1rem' }}>Name</th>
+                  <th style={{ padding: '1rem' }}>Category</th>
+                  <th style={{ padding: '1rem' }}>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {products.map((prod) => (
+                  <tr key={prod._id}>
+                    <td style={{ padding: '1rem' }}>
+                      <div style={{
+                        width: '100px',
+                        height: '100px',
+                        borderRadius: '8px',
+                        overflow: 'hidden'
+                      }}>
+                        <img 
+                          src={prod.images[0]?.url || 'http://localhost:5000/placeholder.jpg'} 
+                          alt={prod.name} 
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover'
+                          }}
+                        />
+                      </div>
+                    </td>
+                    <td style={{ padding: '1rem', verticalAlign: 'middle' }}>{prod.name}</td>
+                    <td style={{ padding: '1rem', verticalAlign: 'middle' }}>{prod.category?.name}</td>
+                    <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
+                      <div className="d-flex gap-2">
+                        <Button 
+                          variant="outline-primary" 
+                          size="sm"
+                          style={{
+                            borderRadius: '8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            padding: '0.5rem 1rem'
+                          }}
+                          onClick={() => handleEdit(prod)}
+                        >
+                          <FaEdit /> Edit
+                        </Button>
+                        <Button 
+                          variant="outline-danger" 
+                          size="sm"
+                          style={{
+                            borderRadius: '8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            padding: '0.5rem 1rem'
+                          }}
+                          onClick={() => handleDelete(prod._id)}
+                        >
+                          <FaTrash /> Delete
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        </div>
 
-          <Modal show={showModal} onHide={() => {resetForm(); setShowModal(false)}} size="lg">
-  <Modal.Header closeButton>
-    <Modal.Title>{isEditing ? 'Edit Product' : 'Add New Product'}</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
+        {/* Product Modal */}
+        <Modal 
+          show={showModal} 
+          onHide={() => {resetForm(); setShowModal(false)}} 
+          size="lg"
+          style={{ zIndex: 1050 }}
+        >
+          <Modal.Header closeButton style={{ background: '#f8f9fa', border: 'none' }}>
+            <Modal.Title className="d-flex align-items-center gap-2">
+              <FaBox className="text-primary" />
+              {isEditing ? 'Edit Product' : 'Add New Product'}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body style={{ padding: '2rem' }}>
     <Form onSubmit={handleSubmit} encType="multipart/form-data">
       <Form.Group className="mb-3">
         <Form.Label>Product Name</Form.Label>
@@ -358,7 +447,7 @@ const Product_Manage = () => {
               </Form>
             </Modal.Body>
           </Modal>
-        </Container>
+        
       </div>
     </div>
   );

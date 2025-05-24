@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Button, Table } from 'react-bootstrap';
 import axios from 'axios';
 import Sidebar from './Sidebar';
+import { FaTags, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
@@ -55,96 +56,177 @@ const Category = () => {
     }
   };
 
-  return (
+    return (
     <div className="d-flex">
       <Sidebar />
-      <div className="flex-grow-1">
-        <Container fluid className="py-4">
-          <Row className="mb-4">
-            <Col md={6} className="mx-auto">
-              <h2 className="text-center mb-4">Category Management</h2>
-              <Form onSubmit={handleSubmit} className="bg-light p-4 rounded-3">
-                <Form.Group className="mb-3">
-                  <Form.Label>Category Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={newCategory.name}
-                    onChange={(e) => setNewCategory({...newCategory, name: e.target.value})}
-                    required
-                  />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    value={newCategory.description}
-                    onChange={(e) => setNewCategory({...newCategory, description: e.target.value})}
-                  />
-                </Form.Group>
-                <Button type="submit" variant="primary" className="w-100">
-                  Add Category
-                </Button>
-              </Form>
+      <div className="flex-grow-1" style={{
+        marginLeft: window.innerWidth >= 768 ? '280px' : '0',
+        transition: 'margin-left 0.3s ease-in-out',
+        background: '#f8f9fa',
+        minHeight: '100vh'
+      }}>
+        <Container fluid className="p-4">
+          {/* Header Section */}
+          <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '2rem',
+            marginBottom: '2rem',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+          }}>
+            <div className="d-flex justify-content-between align-items-center">
+              <div>
+                <h2 className="mb-1 d-flex align-items-center gap-2">
+                  <FaTags className="text-primary" />
+                  Category Management
+                </h2>
+                <p className="text-muted mb-0">Manage your product categories</p>
+              </div>
+            </div>
+          </div>
+
+          <Row className="g-4">
+            {/* Add Category Form */}
+            <Col lg={4}>
+              <div style={{
+                background: 'white',
+                borderRadius: '16px',
+                padding: '1.5rem',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+              }}>
+                <h4 className="mb-4">Add New Category</h4>
+                <Form onSubmit={handleSubmit}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Category Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={newCategory.name}
+                      onChange={(e) => setNewCategory({...newCategory, name: e.target.value})}
+                      required
+                      style={{ borderRadius: '8px' }}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Description</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      value={newCategory.description}
+                      onChange={(e) => setNewCategory({...newCategory, description: e.target.value})}
+                      style={{ borderRadius: '8px' }}
+                    />
+                  </Form.Group>
+                  <Button 
+                    type="submit" 
+                    style={{
+                      backgroundColor: '#1a237e',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '0.75rem',
+                      width: '100%'
+                    }}
+                    className="d-flex align-items-center justify-content-center gap-2"
+                  >
+                    <FaPlus /> Add Category
+                  </Button>
+                </Form>
+              </div>
             </Col>
-          </Row>
-          
-          <Row>
-            <Col>
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {categories.map(category => (
-                    <tr key={category._id}>
-                      <td>
-                        {editingId === category._id ? (
-                          <Form.Control
-                            type="text"
-                            value={category.name}
-                            onChange={(e) => setCategories(categories.map(cat =>
-                              cat._id === category._id ? {...cat, name: e.target.value} : cat
-                            ))}
-                          />
-                        ) : category.name}
-                      </td>
-                      <td>
-                        {editingId === category._id ? (
-                          <Form.Control
-                            type="text"
-                            value={category.description}
-                            onChange={(e) => setCategories(categories.map(cat =>
-                              cat._id === category._id ? {...cat, description: e.target.value} : cat
-                            ))}
-                          />
-                        ) : category.description}
-                      </td>
-                      <td>
-                        <Button
-                          variant={editingId === category._id ? "success" : "primary"}
-                          size="sm"
-                          className="me-2"
-                          onClick={() => handleEdit(category)}
-                        >
-                          {editingId === category._id ? "Save" : "Edit"}
-                        </Button>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          onClick={() => handleDelete(category._id)}
-                        >
-                          Delete
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
+
+            {/* Categories Table */}
+            <Col lg={8}>
+              <div style={{
+                background: 'white',
+                borderRadius: '16px',
+                padding: '1.5rem',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+              }}>
+                <div className="table-responsive">
+                  <Table hover style={{ marginBottom: 0 }}>
+                    <thead>
+                      <tr style={{ backgroundColor: '#f8f9fa' }}>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th style={{ width: '200px' }}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {categories.map(category => (
+                        <tr key={category._id}>
+                          <td>
+                            {editingId === category._id ? (
+                              <Form.Control
+                                type="text"
+                                value={category.name}
+                                onChange={(e) => setCategories(categories.map(cat =>
+                                  cat._id === category._id ? {...cat, name: e.target.value} : cat
+                                ))}
+                                style={{ borderRadius: '8px' }}
+                              />
+                            ) : category.name}
+                          </td>
+                          <td>
+                            {editingId === category._id ? (
+                              <Form.Control
+                                type="text"
+                                value={category.description}
+                                onChange={(e) => setCategories(categories.map(cat =>
+                                  cat._id === category._id ? {...cat, description: e.target.value} : cat
+                                ))}
+                                style={{ borderRadius: '8px' }}
+                              />
+                            ) : category.description}
+                          </td>
+                          <td>
+  <div className="d-flex gap-2">
+    <Button
+      variant={editingId === category._id ? "success" : "outline-primary"}
+      size="sm"
+      className="d-inline-flex align-items-center gap-1"
+      style={{
+        borderRadius: '8px',
+        minWidth: '80px',
+        padding: '0.4rem 0.8rem',
+        transition: 'all 0.2s ease'
+      }}
+      onClick={() => handleEdit(category)}
+    >
+      {editingId === category._id ? (
+        <>
+          <FaEdit size={14} /> Save
+        </>
+      ) : (
+        <>
+          <FaEdit size={14} /> Edit
+        </>
+      )}
+    </Button>
+    <Button
+      variant="outline-danger"
+      size="sm"
+      className="d-inline-flex align-items-center gap-1"
+      style={{
+        borderRadius: '8px',
+        minWidth: '80px',
+        padding: '0.4rem 0.8rem',
+        transition: 'all 0.2s ease'
+      }}
+      onClick={() => {
+        if (window.confirm('Are you sure you want to delete this category?')) {
+          handleDelete(category._id);
+        }
+      }}
+    >
+      <FaTrash size={14} /> Delete
+    </Button>
+  </div>
+</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+              </div>
             </Col>
           </Row>
         </Container>

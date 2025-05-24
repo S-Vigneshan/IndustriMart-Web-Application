@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import React, { useState, useEffect, useCallback} from 'react';
+import { Container,  Button } from 'react-bootstrap';
 import Sidebar from './Sidebar';
 import axios from 'axios';
 import './Dashboard.css';
@@ -14,19 +14,8 @@ const Dashboard = () => {
     productCount: 0,
     orderCount: 0
   });
-  const [orders, setOrders] = useState([]);
 
-  useEffect(() => {
-    // Check if admin is logged in
-    const isAdmin = localStorage.getItem('isAdmin');
-    if (!isAdmin) {
-      navigate('/admin/signin');
-      return;
-    }
-    fetchDashboardStats();
-  }, [navigate]);
-
-  const fetchDashboardStats = async () => {
+  const fetchDashboardStats = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       const config = {
@@ -36,21 +25,17 @@ const Dashboard = () => {
         }
       };
 
-      // Fetch users count with auth header
-      const usersResponse = await axios.get('http://localhost:5000/api/admin/users', config);
+      const [usersResponse, productsResponse, ordersResponse] = await Promise.all([
+        axios.get('http://localhost:5000/api/admin/users', config),
+        axios.get('http://localhost:5000/api/admin/products', config),
+        axios.get('http://localhost:5000/api/orders', config)
+      ]);
+
       const userCount = usersResponse.data.length;
-
-      // Fetch products count with auth header
-      const productsResponse = await axios.get('http://localhost:5000/api/admin/products', config);
       const productCount = productsResponse.data.length;
+      const orderCount = ordersResponse.data.length;
+      const totalSales = ordersResponse.data.reduce((sum, order) => sum + order.totalAmount, 0);
 
-      // Fetch orders with auth header
-      const ordersResponse = await axios.get('http://localhost:5000/api/orders', config);
-      const ordersData = ordersResponse.data;
-      const orderCount = ordersData.length;
-      const totalSales = ordersData.reduce((sum, order) => sum + order.totalAmount, 0);
-
-      setOrders(ordersData);
       setStats({
         userCount,
         totalSales,
@@ -65,89 +50,84 @@ const Dashboard = () => {
         navigate('/admin/signin');
       }
     }
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    const isAdmin = localStorage.getItem('isAdmin');
+    if (!isAdmin) {
+      navigate('/admin/signin');
+      return;
+    }
+    fetchDashboardStats();
+  }, [navigate, fetchDashboardStats]);
 
   return (
     <div className="d-flex">
       <Sidebar />
-      <div className="dashboard-content flex-grow-1 bg-light min-vh-100">
-        <Container fluid className="p-4">
-          {/* Header Section */}
-          <Row className="mb-5 align-items-center">
-            <Col>
-              <h1 className="display-5 fw-bold text-dark mb-2">Dashboard Overview</h1>
-              <p className="lead text-muted mb-0">Welcome to your admin dashboard</p>
-            </Col>
-            <Col xs="auto">
+      <div className="dashboard-content flex-grow-1">
+        <Container fluid className="p-0">
+          <div className="header-section">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h1 className="display-6 fw-bold text-dark mb-2">Dashboard Overview</h1>
+                <p className="text-muted mb-0">Welcome back to your admin dashboard</p>
+              </div>
               <Button 
                 variant="primary"
-                size="lg"
-                className="d-flex align-items-center gap-2 px-4"
+                className="refresh-btn d-flex align-items-center gap-2"
                 onClick={fetchDashboardStats}
               >
                 <FaSync /> Refresh Data
               </Button>
-            </Col>
-          </Row>
-          
-          {/* Stats Cards */}
-          <Row className="g-4 mb-5">
-            <Col lg={3} md={6}>
-              <div className="p-4 bg-white rounded-4 shadow-sm h-100 stat-card">
-                <div className="d-flex align-items-center">
-                  <div className="stat-icon bg-primary bg-opacity-10 rounded-4 p-4">
-                    <FaUsers className="text-primary" style={{ fontSize: '2rem' }} />
-                  </div>
-                  <div className="ms-4">
-                    <h6 className="text-muted fw-semibold mb-2">Total Users</h6>
-                    <h2 className="display-6 fw-bold mb-0">{stats.userCount}</h2>
-                  </div>
-                </div>
-              </div>
-            </Col>
+            </div>
+          </div>
 
-            <Col lg={3} md={6}>
-              <div className="p-4 bg-white rounded-4 shadow-sm h-100 stat-card">
-                <div className="d-flex align-items-center">
-                  <div className="stat-icon bg-success bg-opacity-10 rounded-4 p-4">
-                    <FaChartLine className="text-success" style={{ fontSize: '2rem' }} />
-                  </div>
-                  <div className="ms-4">
-                    <h6 className="text-muted fw-semibold mb-2">Total Sales</h6>
-                    <h2 className="display-6 fw-bold mb-0">රු {stats.totalSales.toLocaleString()}</h2>
-                  </div>
-                </div>
+          <div className="stats-container">
+            <div className="stat-item">
+              <div className="stat-icon bg-primary bg-opacity-10">
+                <FaUsers className="text-primary" style={{ fontSize: '1.75rem' }} />
               </div>
-            </Col>
+              <div className="stat-content">
+                <div className="stat-label">Total Users</div>
+                <div className="stat-value">{stats.userCount.toLocaleString()}</div>
+              </div>
+            </div>
 
-            <Col lg={3} md={6}>
-              <div className="p-4 bg-white rounded-4 shadow-sm h-100 stat-card">
-                <div className="d-flex align-items-center">
-                  <div className="stat-icon bg-info bg-opacity-10 rounded-4 p-4">
-                    <FaBoxes className="text-info" style={{ fontSize: '2rem' }} />
-                  </div>
-                  <div className="ms-4">
-                    <h6 className="text-muted fw-semibold mb-2">Products</h6>
-                    <h2 className="display-6 fw-bold mb-0">{stats.productCount}</h2>
-                  </div>
+            <div className="stat-item">
+              <div className="stat-icon bg-success bg-opacity-10">
+                <FaChartLine className="text-success" style={{ fontSize: '1.75rem' }} />
+              </div>
+              <div className="stat-content">
+                <div className="stat-label">Total Revenue</div>
+                <div className="sales-value">
+                  රු {Number(stats.totalSales).toLocaleString('en-US', {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2
+                  })}
                 </div>
               </div>
-            </Col>
+            </div>
 
-            <Col lg={3} md={6}>
-              <div className="p-4 bg-white rounded-4 shadow-sm h-100 stat-card">
-                <div className="d-flex align-items-center">
-                  <div className="stat-icon bg-warning bg-opacity-10 rounded-4 p-4">
-                    <FaShoppingCart className="text-warning" style={{ fontSize: '2rem' }} />
-                  </div>
-                  <div className="ms-4">
-                    <h6 className="text-muted fw-semibold mb-2">Orders</h6>
-                    <h2 className="display-6 fw-bold mb-0">{stats.orderCount}</h2>
-                  </div>
-                </div>
+            <div className="stat-item">
+              <div className="stat-icon bg-info bg-opacity-10">
+                <FaBoxes className="text-info" style={{ fontSize: '1.75rem' }} />
               </div>
-            </Col>
-          </Row>
+              <div className="stat-content">
+                <div className="stat-label">Total Products</div>
+                <div className="stat-value">{stats.productCount.toLocaleString()}</div>
+              </div>
+            </div>
+
+            <div className="stat-item">
+              <div className="stat-icon bg-warning bg-opacity-10">
+                <FaShoppingCart className="text-warning" style={{ fontSize: '1.75rem' }} />
+              </div>
+              <div className="stat-content">
+                <div className="stat-label">Total Orders</div>
+                <div className="stat-value">{stats.orderCount.toLocaleString()}</div>
+              </div>
+            </div>
+          </div>
         </Container>
       </div>
     </div>

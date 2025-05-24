@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Table, Badge, Button, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
 import Sidebar from './Sidebar';
+import { FaShoppingBag, FaEdit, FaTrash, FaSync } from 'react-icons/fa';
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
@@ -67,113 +68,200 @@ const OrderManagement = () => {
   };
 
   return (
-   <div className="d-flex">
-    <Sidebar />
-    <Container fluid className="py-4">
-      <h2 className="mb-4">Order Management</h2>
-      
-      {loading ? (
-        <div className="text-center">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
+    <div className="d-flex">
+      <Sidebar />
+      <div className="flex-grow-1" style={{
+        marginLeft: window.innerWidth >= 768 ? '280px' : '0',
+        transition: 'margin-left 0.3s ease-in-out',
+        background: '#f8f9fa',
+        minHeight: '100vh'
+      }}>
+        <Container fluid className="p-4">
+          {/* Header Section */}
+          <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '2rem',
+            marginBottom: '2rem',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+          }}>
+            <div className="d-flex justify-content-between align-items-center">
+              <div>
+                <h2 className="mb-1 d-flex align-items-center gap-2">
+                  <FaShoppingBag className="text-primary" />
+                  Order Management
+                </h2>
+                <p className="text-muted mb-0">Manage and track your orders</p>
+              </div>
+              <Button 
+                onClick={fetchOrders}
+                style={{
+                  backgroundColor: '#1a237e',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '0.75rem 1.5rem'
+                }}
+                className="d-flex align-items-center gap-2"
+              >
+                <FaSync /> Refresh Orders
+              </Button>
+            </div>
           </div>
-        </div>
-      ) : (
-        <Table responsive striped bordered hover>
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Customer</th>
-              <th>Total Amount</th>
-              <th>Status</th>
-              <th>Date</th>
-              <th>Shipping Address</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order._id}>
-                <td>{order._id}</td>
-                <td>
-                  {order.shippingDetails.firstName} {order.shippingDetails.lastName}
-                  <br />
-                  <small>{order.shippingDetails.email}</small>
-                </td>
-                <td>රු{order.totalAmount.toFixed(2)}</td>
-                <td>
-                  <Badge bg={getStatusBadgeVariant(order.status)}>
-                    {order.status}
-                  </Badge>
-                </td>
-                <td>
-                  {new Date(order.createdAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                  })}
-                </td>
-                <td>
-                  {order.shippingDetails.address}, {order.shippingDetails.city}
-                </td>
-                <td>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    className="me-2"
-                    onClick={() => {
-                      setSelectedOrder(order);
-                      setEditedStatus(order.status);
-                      setShowEditModal(true);
-                    }}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => handleDelete(order._id)}
-                  >
-                    Delete
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      )}
 
-        {/* Edit Modal */}
-        <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Update Order Status</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form>
-              <Form.Group>
-                <Form.Label>Order Status</Form.Label>
-                <Form.Select
-                  value={editedStatus}
-                  onChange={(e) => setEditedStatus(e.target.value)}
-                >
-                  <option value="Pending">Pending</option>
-                  <option value="Processing">Processing</option>
-                  <option value="Shipped">Shipped</option>
-                  <option value="Delivered">Delivered</option>
-                </Form.Select>
-              </Form.Group>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowEditModal(false)}>
-              Cancel
-            </Button>
-            <Button variant="primary" onClick={handleUpdate}>
-              Update Status
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </Container>
+          {/* Orders Table Section */}
+          <div style={{
+            background: 'white',
+            borderRadius: '16px',
+            padding: '1.5rem',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+          }}>
+            {loading ? (
+              <div className="text-center p-5">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            ) : (
+              <div className="table-responsive">
+                <Table hover style={{ margin: 0 }}>
+                  <thead>
+                    <tr style={{ background: '#f8f9fa' }}>
+                      <th style={{ padding: '1rem' }}>Order ID</th>
+                      <th style={{ padding: '1rem' }}>Customer</th>
+                      <th style={{ padding: '1rem' }}>Total Amount</th>
+                      <th style={{ padding: '1rem' }}>Status</th>
+                      <th style={{ padding: '1rem' }}>Date</th>
+                      <th style={{ padding: '1rem' }}>Shipping Address</th>
+                      <th style={{ padding: '1rem' }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orders.map((order) => (
+                      <tr key={order._id}>
+                        <td style={{ padding: '1rem', verticalAlign: 'middle' }}>{order._id}</td>
+                        <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
+                          <div style={{ fontWeight: '500' }}>
+                            {order.shippingDetails.firstName} {order.shippingDetails.lastName}
+                          </div>
+                          <div style={{ fontSize: '0.875rem', color: '#6c757d' }}>
+                            {order.shippingDetails.email}
+                          </div>
+                        </td>
+                        <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
+                          රු{order.totalAmount.toFixed(2)}
+                        </td>
+                        <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
+                          <Badge bg={getStatusBadgeVariant(order.status)} style={{ fontSize: '0.875rem', padding: '0.5rem 0.75rem' }}>
+                            {order.status}
+                          </Badge>
+                        </td>
+                        <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
+                          {new Date(order.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </td>
+                        <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
+                          {order.shippingDetails.address}, {order.shippingDetails.city}
+                        </td>
+                        
+<td style={{ padding: '1rem', verticalAlign: 'middle', minWidth: '120px' }}>
+  <div className="d-flex flex-column gap-2">
+    <Button
+      variant="outline-primary"
+      size="sm"
+      style={{
+        borderRadius: '8px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.5rem',
+        padding: '0.5rem',
+        width: '100%'
+      }}
+      onClick={() => {
+        setSelectedOrder(order);
+        setEditedStatus(order.status);
+        setShowEditModal(true);
+      }}
+    >
+      <FaEdit /> Edit
+    </Button>
+    <Button
+      variant="outline-danger"
+      size="sm"
+      style={{
+        borderRadius: '8px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.5rem',
+        padding: '0.5rem',
+        width: '100%'
+      }}
+      onClick={() => handleDelete(order._id)}
+    >
+      <FaTrash /> Delete
+    </Button>
+  </div>
+</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
+            )}
+          </div>
+
+          {/* Edit Modal */}
+          <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
+            <Modal.Header closeButton style={{ background: '#f8f9fa', border: 'none' }}>
+              <Modal.Title className="d-flex align-items-center gap-2">
+                <FaEdit className="text-primary" />
+                Update Order Status
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body style={{ padding: '2rem' }}>
+              <Form>
+                <Form.Group>
+                  <Form.Label>Order Status</Form.Label>
+                  <Form.Select
+                    value={editedStatus}
+                    onChange={(e) => setEditedStatus(e.target.value)}
+                    style={{ borderRadius: '8px', padding: '0.75rem' }}
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivered">Delivered</option>
+                  </Form.Select>
+                </Form.Group>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer style={{ border: 'none', padding: '1rem 2rem 2rem' }}>
+              <Button 
+                variant="light" 
+                onClick={() => setShowEditModal(false)}
+                style={{ borderRadius: '8px' }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                variant="primary" 
+                onClick={handleUpdate}
+                style={{
+                  backgroundColor: '#1a237e',
+                  border: 'none',
+                  borderRadius: '8px'
+                }}
+              >
+                Update Status
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </Container>
+      </div>
     </div>
   );
 };
