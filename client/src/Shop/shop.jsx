@@ -48,6 +48,10 @@ const ShopPage = () => {
   const handleSearch = () => {
     // The filtering will happen automatically through filteredProducts
   };
+  const isProductInStock = (product) => {
+  if (!product.defaultSizes || product.defaultSizes.length === 0) return false;
+  return product.defaultSizes.some(size => size.stock > 0);
+};
   
 
   // Apply filters and sorting
@@ -110,31 +114,40 @@ const ShopPage = () => {
 
       {/* Product Listing */}
       <div className="product-list">
-        {filteredProducts.map((product) => (
-          <div className="product-card" key={product._id}>
-            <img 
-              src={product.images && product.images[0] ? 
-                product.images[0].url : 
-                'http://localhost:5000/placeholder.jpg'} 
-              alt={product.name}
-              onError={(e) => {
-                e.target.src = 'http://localhost:5000/placeholder.jpg';
-              }}
-            />
-            <h3>{product.name}</h3>
-            <p>රු. {product.defaultSizes && product.defaultSizes[0] ? 
-              product.defaultSizes[0].price.toFixed(2) : 
-              "Price varies"}</p>
-            <button
-              className="view-details-btn"
-              onClick={() => handleViewDetails(product)}
-            >
-              View Details
-            </button>
-          </div>
-        ))}
-        {filteredProducts.length === 0 && <p>No products match the filters.</p>}
+  {filteredProducts.map((product) => {
+    const hasStock = isProductInStock(product);
+    
+    return (
+      <div className={`product-card ${!hasStock ? 'out-of-stock' : ''}`} key={product._id}>
+        <img 
+          src={product.images && product.images[0] ? 
+            product.images[0].url : 
+            'http://localhost:5000/placeholder.jpg'} 
+          alt={product.name}
+          onError={(e) => {
+            e.target.src = 'http://localhost:5000/placeholder.jpg';
+          }}
+        />
+        <h3>{product.name}</h3>
+        <p>රු. {product.defaultSizes && product.defaultSizes[0] ? 
+          product.defaultSizes[0].price.toFixed(2) : 
+          "Price varies"}</p>
+        
+        {!hasStock ? (
+          <div className="out-of-stock-label">Out of Stock</div>
+        ) : (
+          <button
+            className="view-details-btn"
+            onClick={() => handleViewDetails(product)}
+          >
+            View Details
+          </button>
+        )}
       </div>
+    );
+  })}
+  {filteredProducts.length === 0 && <p>No products match the filters.</p>}
+</div>
     </div>
   );
 };

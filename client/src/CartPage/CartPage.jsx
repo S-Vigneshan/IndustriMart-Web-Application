@@ -55,7 +55,7 @@ const CartPage = () => {
                       </label>
                       {maxStock > 0 ? (
                         <span className="stock-info">
-                          Available: {maxStock}
+                          Stock Available
                         </span>
                       ) : (
                         <span className="stock-info out-of-stock">

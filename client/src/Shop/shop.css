@@ -184,6 +184,20 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 123, 255, 0.2);
 }
+.product-card.out-of-stock {
+  opacity: 0.7;
+  position: relative;
+}
+
+.out-of-stock-label {
+  background-color: #ff4444;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+}
 
 /* Responsive Design */
 @media (max-width: 992px) {
