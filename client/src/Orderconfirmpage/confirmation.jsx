@@ -100,16 +100,22 @@ const OrderConfirmation = () => {
             <h3>Order Summary</h3>
             <div className="details-content">
               <div className="order-items">
-                {orderDetails.items.map((item, index) => (
-                  <div key={index} className="order-item">
-                    <div className="item-details">
-                      <h6>{item.name}</h6>
-                      <span className="quantity">x{item.quantity}</span>
-                    </div>
-                    <span className="price">රු {item.price.toFixed(2)}</span>
-                  </div>
-                ))}
-              </div>
+  {orderDetails.items.map((item, index) => (
+    <div key={index} className="order-item">
+      <div className="item-details">
+        <h6>{item.name}</h6>
+        <div className="item-meta">
+          <span className="size">Size: {item.variation?.size || 'N/A'}</span>
+          <span className="quantity">Qty: {item.quantity}</span>
+        </div>
+      </div>
+      <div className="price-details">
+        <span className="unit-price">රු {item.price.toFixed(2)} each</span>
+        <span className="total-price">රු {(item.price * item.quantity).toFixed(2)}</span>
+      </div>
+    </div>
+  ))}
+</div>
               <div className="total-amount">
                 <span>Total Amount</span>
                 <span>රු {orderDetails.totalAmount.toFixed(2)}</span>

@@ -108,25 +108,33 @@ const MyOrder = () => {
 
               <div className="order-body p-4 bg-white">
                 {order.items.map((item, index) => (
-                  <div 
-                    key={index} 
-                    className={`order-product ${
-                      index !== order.items.length - 1 ? 'mb-3 pb-3 border-bottom' : ''
-                    }`}
-                  >
-                    <Row className="align-items-center">
-                      <Col>
-                        <h6 className="mb-1">{item.name}</h6>
-                        <span className="quantity-badge">
-                          Qty: {item.quantity}
-                        </span>
-                      </Col>
-                      <Col xs="auto">
-                        <div className="price">රු{item.price.toFixed(2)}</div>
-                      </Col>
-                    </Row>
-                  </div>
-                ))}
+  <div 
+    key={index} 
+    className={`order-product ${
+      index !== order.items.length - 1 ? 'mb-3 pb-3 border-bottom' : ''
+    }`}
+  >
+    <Row className="align-items-center">
+      <Col>
+        <h6 className="mb-1">{item.name}</h6>
+        <div className="item-details">
+          <span className="size-badge">
+            Size: {item.variation?.size || 'N/A'}
+          </span>
+          <span className="quantity-badge">
+            Qty: {item.quantity}
+          </span>
+        </div>
+      </Col>
+      <Col xs="auto">
+        <div className="price-stack">
+          <small className="text-muted d-block">රු{item.price.toFixed(2)} each</small>
+          <div className="price">රු{(item.price * item.quantity).toFixed(2)}</div>
+        </div>
+      </Col>
+    </Row>
+  </div>
+))}
 
                 <div className="order-total mt-4 p-3 bg-light rounded">
                   <Row className="align-items-center">

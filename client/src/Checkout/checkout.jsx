@@ -266,19 +266,22 @@ const CheckoutPage = () => {
           <div className="bg-white p-4 rounded-3 shadow-sm">
             <h2 className="mb-4 border-bottom pb-3">Order Summary</h2>
             <div className="order-items">
-              {cartItems.map((item) => (
-                <div key={item.id} className="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded">
-                  <div>
-                    <h6 className="mb-0">{item.name}</h6>
-                    <small className="text-muted">Quantity: {item.quantity}</small>
-                  </div>
-                  <div className="text-end">
-                    <div>රු {item.variation.price}</div>
-                    <small className="text-muted">රු {(item.variation.price * item.quantity).toFixed(2)}</small>
-                  </div>
-                </div>
-              ))}
-            </div>
+  {cartItems.map((item) => (
+    <div key={item.id} className="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded">
+      <div>
+        <h6 className="mb-0">{item.name}</h6>
+        <small className="text-muted d-block">Size: {item.variation.size}</small>
+        <small className="text-muted d-block">Quantity: {item.quantity}</small>
+      </div>
+      <div className="text-end">
+        <div>රු {item.variation.price.toFixed(2)}</div>
+        <small className="text-muted">
+          Subtotal: රු {(item.variation.price * item.quantity).toFixed(2)}
+        </small>
+      </div>
+    </div>
+  ))}
+</div>
 
             <div className="border-top pt-3 mt-4">
               <h4 className="d-flex justify-content-between">

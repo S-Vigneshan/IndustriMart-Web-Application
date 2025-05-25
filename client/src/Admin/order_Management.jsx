@@ -280,70 +280,72 @@ const OrderManagement = () => {
 
           {/* Order Details Modal */}
           <Modal 
-            show={showDetailsModal} 
-            onHide={() => setShowDetailsModal(false)}
-            size="lg"
-          >
-            <Modal.Header closeButton style={{ background: '#f8f9fa', border: 'none' }}>
-              <Modal.Title className="d-flex align-items-center gap-2">
-                <FaBoxOpen className="text-primary" />
-                Order Details
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body style={{ padding: '2rem' }}>
-              {selectedOrder && (
-                <>
-                  <h6 className="mb-3">Order ID: {selectedOrder._id}</h6>
-                  <Table responsive bordered hover>
-                    <thead>
-                      <tr>
-                        <th>Item Name</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Subtotal</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedOrder.items.map((item, index) => (
-                        <tr key={index}>
-                          <td>{item.name}</td>
-                          <td>{item.quantity}</td>
-                          <td>රු {item.price.toFixed(2)}</td>
-                          <td>රු {(item.price * item.quantity).toFixed(2)}</td>
-                        </tr>
-                      ))}
-                      <tr className="table-light">
-                        <td colSpan="3" className="text-end fw-bold">Total Amount:</td>
-                        <td className="fw-bold">රු {selectedOrder.totalAmount.toFixed(2)}</td>
-                      </tr>
-                    </tbody>
-                  </Table>
-                  
-                  <div className="mt-4">
-                    <h6 className="mb-3">Customer Details</h6>
-                    <p className="mb-1"><strong>Name:</strong> {selectedOrder.shippingDetails.firstName} {selectedOrder.shippingDetails.lastName}</p>
-                    <p className="mb-1"><strong>Email:</strong> {selectedOrder.shippingDetails.email}</p>
-                    <p className="mb-1"><strong>Phone:</strong> {selectedOrder.shippingDetails.phone}</p>
-                    <p className="mb-1"><strong>Address:</strong> {selectedOrder.shippingDetails.address}</p>
-                    <p className="mb-0"><strong>City:</strong> {selectedOrder.shippingDetails.city}</p>
-                  </div>
-                </>
-              )}
-            </Modal.Body>
-            <Modal.Footer style={{ border: 'none', padding: '1rem 2rem 2rem' }}>
-              <Button 
-                variant="primary" 
-                onClick={() => setShowDetailsModal(false)}
-                style={{
-                  backgroundColor: '#1a237e',
-                  border: 'none',
-                  borderRadius: '8px'
-                }}
-              >
-                Close
-              </Button>
-            </Modal.Footer>
-          </Modal>
+  show={showDetailsModal} 
+  onHide={() => setShowDetailsModal(false)}
+  size="lg"
+>
+  <Modal.Header closeButton style={{ background: '#f8f9fa', border: 'none' }}>
+    <Modal.Title className="d-flex align-items-center gap-2">
+      <FaBoxOpen className="text-primary" />
+      Order Details
+    </Modal.Title>
+  </Modal.Header>
+  <Modal.Body style={{ padding: '2rem' }}>
+    {selectedOrder && (
+      <>
+        <h6 className="mb-3">Order ID: {selectedOrder._id}</h6>
+        <Table responsive bordered hover>
+          <thead>
+            <tr>
+              <th>Item Name</th>
+              <th>Size</th>
+              <th>Quantity</th>
+              <th>Unit Price</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            {selectedOrder.items.map((item, index) => (
+  <tr key={index}>
+    <td>{item.name}</td>
+    <td>{item.variation?.size || 'N/A'}</td>
+    <td>{item.quantity}</td>
+    <td>රු {item.price.toFixed(2)}</td>
+    <td>රු {(item.price * item.quantity).toFixed(2)}</td>
+  </tr>
+))}
+            <tr className="table-light">
+              <td colSpan="4" className="text-end fw-bold">Total Amount:</td>
+              <td className="fw-bold">රු {selectedOrder.totalAmount.toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </Table>
+        
+        <div className="mt-4">
+          <h6 className="mb-3">Customer Details</h6>
+          <p className="mb-1"><strong>Name:</strong> {selectedOrder.shippingDetails.firstName} {selectedOrder.shippingDetails.lastName}</p>
+          <p className="mb-1"><strong>Email:</strong> {selectedOrder.shippingDetails.email}</p>
+          <p className="mb-1"><strong>Phone:</strong> {selectedOrder.shippingDetails.phone}</p>
+          <p className="mb-1"><strong>Address:</strong> {selectedOrder.shippingDetails.address}</p>
+          <p className="mb-0"><strong>City:</strong> {selectedOrder.shippingDetails.city}</p>
+        </div>
+      </>
+    )}
+  </Modal.Body>
+  <Modal.Footer style={{ border: 'none', padding: '1rem 2rem 2rem' }}>
+    <Button 
+      variant="primary" 
+      onClick={() => setShowDetailsModal(false)}
+      style={{
+        backgroundColor: '#1a237e',
+        border: 'none',
+        borderRadius: '8px'
+      }}
+    >
+      Close
+    </Button>
+  </Modal.Footer>
+</Modal>
         </Container>
       </div>
     </div>

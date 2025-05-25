@@ -11,7 +11,11 @@ exports.createOrder = async (req, res) => {
         productId: item.id,
         name: item.name,
         quantity: item.quantity,
-        price: item.variation.price
+        price: item.variation.price,
+        variation: {
+          size: item.variation.size,
+          price: item.variation.price
+        }
       })),
       shippingDetails,
       totalAmount,

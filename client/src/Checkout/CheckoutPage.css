@@ -42,6 +42,25 @@
 .order-items::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+.order-items .text-muted {
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.order-items h6 {
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.bg-light {
+  background-color: #f8f9fa !important;
+  border: 1px solid #e9ecef;
+}
+
+.order-items > div:hover {
+  background-color: #f0f0f0 !important;
+  transition: background-color 0.2s ease;
+}
 
 @media (max-width: 768px) {
   .payment-option {

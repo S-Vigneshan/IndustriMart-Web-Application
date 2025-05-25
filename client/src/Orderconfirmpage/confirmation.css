@@ -131,6 +131,29 @@
   text-align: center;
   padding: 4rem 1rem;
 }
+.item-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+.price-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.unit-price {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.total-price {
+  font-weight: 600;
+  color: #0d6efd;
+}
 
 /* Responsive Styles */
 @media (max-width: 768px) {
