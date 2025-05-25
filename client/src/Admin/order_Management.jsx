@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Container, Table, Badge, Button, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
 import Sidebar from './Sidebar';
-import { FaShoppingBag, FaEdit, FaTrash, FaSync } from 'react-icons/fa';
+import { FaShoppingBag, FaEdit, FaTrash, FaSync, FaBoxOpen } from 'react-icons/fa';
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [editedStatus, setEditedStatus] = useState('');
 
-  // Fetch all orders
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -27,7 +27,6 @@ const OrderManagement = () => {
     }
   };
 
-  // Delete order
   const handleDelete = async (orderId) => {
     if (window.confirm('Are you sure you want to delete this order?')) {
       try {
@@ -39,7 +38,6 @@ const OrderManagement = () => {
     }
   };
 
-  // Update order status
   const handleUpdate = async () => {
     try {
       await axios.put(`http://localhost:5000/api/orders/${selectedOrder._id}`, {
@@ -56,7 +54,6 @@ const OrderManagement = () => {
     }
   };
 
-  // Status badge color
   const getStatusBadgeVariant = (status) => {
     const variants = {
       'Pending': 'warning',
@@ -65,6 +62,11 @@ const OrderManagement = () => {
       'Delivered': 'success'
     };
     return variants[status] || 'secondary';
+  };
+
+  const handleViewDetails = (order) => {
+    setSelectedOrder(order);
+    setShowDetailsModal(true);
   };
 
   return (
@@ -165,47 +167,62 @@ const OrderManagement = () => {
                         <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
                           {order.shippingDetails.address}, {order.shippingDetails.city}
                         </td>
-                        
-<td style={{ padding: '1rem', verticalAlign: 'middle', minWidth: '120px' }}>
-  <div className="d-flex flex-column gap-2">
-    <Button
-      variant="outline-primary"
-      size="sm"
-      style={{
-        borderRadius: '8px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0.5rem',
-        padding: '0.5rem',
-        width: '100%'
-      }}
-      onClick={() => {
-        setSelectedOrder(order);
-        setEditedStatus(order.status);
-        setShowEditModal(true);
-      }}
-    >
-      <FaEdit /> Edit
-    </Button>
-    <Button
-      variant="outline-danger"
-      size="sm"
-      style={{
-        borderRadius: '8px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0.5rem',
-        padding: '0.5rem',
-        width: '100%'
-      }}
-      onClick={() => handleDelete(order._id)}
-    >
-      <FaTrash /> Delete
-    </Button>
-  </div>
-</td>
+                        <td style={{ padding: '1rem', verticalAlign: 'middle', minWidth: '120px' }}>
+                          <div className="d-flex flex-column gap-2">
+                            <Button
+                              variant="outline-info"
+                              size="sm"
+                              style={{
+                                borderRadius: '8px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '0.5rem',
+                                padding: '0.5rem',
+                                width: '100%'
+                              }}
+                              onClick={() => handleViewDetails(order)}
+                            >
+                              <FaBoxOpen /> View Items
+                            </Button>
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              style={{
+                                borderRadius: '8px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '0.5rem',
+                                padding: '0.5rem',
+                                width: '100%'
+                              }}
+                              onClick={() => {
+                                setSelectedOrder(order);
+                                setEditedStatus(order.status);
+                                setShowEditModal(true);
+                              }}
+                            >
+                              <FaEdit /> Edit Status
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              style={{
+                                borderRadius: '8px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '0.5rem',
+                                padding: '0.5rem',
+                                width: '100%'
+                              }}
+                              onClick={() => handleDelete(order._id)}
+                            >
+                              <FaTrash /> Delete
+                            </Button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -214,7 +231,7 @@ const OrderManagement = () => {
             )}
           </div>
 
-          {/* Edit Modal */}
+          {/* Edit Status Modal */}
           <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
             <Modal.Header closeButton style={{ background: '#f8f9fa', border: 'none' }}>
               <Modal.Title className="d-flex align-items-center gap-2">
@@ -257,6 +274,73 @@ const OrderManagement = () => {
                 }}
               >
                 Update Status
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          {/* Order Details Modal */}
+          <Modal 
+            show={showDetailsModal} 
+            onHide={() => setShowDetailsModal(false)}
+            size="lg"
+          >
+            <Modal.Header closeButton style={{ background: '#f8f9fa', border: 'none' }}>
+              <Modal.Title className="d-flex align-items-center gap-2">
+                <FaBoxOpen className="text-primary" />
+                Order Details
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body style={{ padding: '2rem' }}>
+              {selectedOrder && (
+                <>
+                  <h6 className="mb-3">Order ID: {selectedOrder._id}</h6>
+                  <Table responsive bordered hover>
+                    <thead>
+                      <tr>
+                        <th>Item Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedOrder.items.map((item, index) => (
+                        <tr key={index}>
+                          <td>{item.name}</td>
+                          <td>{item.quantity}</td>
+                          <td>රු {item.price.toFixed(2)}</td>
+                          <td>රු {(item.price * item.quantity).toFixed(2)}</td>
+                        </tr>
+                      ))}
+                      <tr className="table-light">
+                        <td colSpan="3" className="text-end fw-bold">Total Amount:</td>
+                        <td className="fw-bold">රු {selectedOrder.totalAmount.toFixed(2)}</td>
+                      </tr>
+                    </tbody>
+                  </Table>
+                  
+                  <div className="mt-4">
+                    <h6 className="mb-3">Customer Details</h6>
+                    <p className="mb-1"><strong>Name:</strong> {selectedOrder.shippingDetails.firstName} {selectedOrder.shippingDetails.lastName}</p>
+                    <p className="mb-1"><strong>Email:</strong> {selectedOrder.shippingDetails.email}</p>
+                    <p className="mb-1"><strong>Phone:</strong> {selectedOrder.shippingDetails.phone}</p>
+                    <p className="mb-1"><strong>Address:</strong> {selectedOrder.shippingDetails.address}</p>
+                    <p className="mb-0"><strong>City:</strong> {selectedOrder.shippingDetails.city}</p>
+                  </div>
+                </>
+              )}
+            </Modal.Body>
+            <Modal.Footer style={{ border: 'none', padding: '1rem 2rem 2rem' }}>
+              <Button 
+                variant="primary" 
+                onClick={() => setShowDetailsModal(false)}
+                style={{
+                  backgroundColor: '#1a237e',
+                  border: 'none',
+                  borderRadius: '8px'
+                }}
+              >
+                Close
               </Button>
             </Modal.Footer>
           </Modal>
