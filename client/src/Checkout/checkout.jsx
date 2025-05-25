@@ -9,7 +9,7 @@ import axios from 'axios';
 import './CheckoutPage.css';
 
 const CheckoutPage = () => {
-  const { cartItems, calculateTotal } = useContext(CartContext);
+  const { cartItems, calculateTotal,clearCart } = useContext(CartContext);
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [userId, setUserId] = useState(null);
@@ -65,7 +65,7 @@ const CheckoutPage = () => {
     const response = await axios.post('http://localhost:5000/api/orders', orderData);
     
     // Clear cart after successful order
-    localStorage.removeItem('cart');
+     clearCart();
     
     // Navigate to order confirmation with the new order ID
     navigate(`/order-confirmation/${response.data.orderId}`);
@@ -92,6 +92,11 @@ const CheckoutPage = () => {
   
       const response = await axios.post('http://localhost:5000/api/orders', orderData);
       const orderId = response.data.orderId;
+
+      window.payhere.onCompleted = function onCompleted(orderId) {
+        clearCart();
+        navigate(`/order-confirmation/${orderId}`);
+      };
   
       if (!orderId) {
         throw new Error('Order ID not received from server');

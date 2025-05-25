@@ -56,6 +56,11 @@ const updateCartQuantity = (productId, newQuantity, maxStock, isCustomSize) => {
   };
 
   const clearError = () => setError(null);
+  const clearCart = () => {
+    setCartItems([]);
+    setError(null);
+  };
+
 
   return (
     <CartContext.Provider value={{
@@ -65,7 +70,8 @@ const updateCartQuantity = (productId, newQuantity, maxStock, isCustomSize) => {
       updateCartQuantity,
       calculateTotal,
       error,
-      clearError
+      clearError,
+      clearCart
     }}>
       {children}
     </CartContext.Provider>

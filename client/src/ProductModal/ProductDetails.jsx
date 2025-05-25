@@ -144,7 +144,7 @@ const ProductDetails = () => {
 
           {product.allowCustomSize && (
             <div className="custom-size-section">
-              <h3>Custom Size:</h3>
+              <h3>Custom Size("Length"):</h3>
               <div className="custom-size-inputs">
                 <input
                   type="number"
