@@ -10,6 +10,17 @@ const UNIT_CONVERSIONS = {
   inches: 0.0254,
   feet: 0.3048
 };
+const getStockStatus = (sizeObj) => {
+  return sizeObj?.stock > 0 ? {
+    status: 'In Stock',
+    available: true,
+    quantity: sizeObj.stock
+  } : {
+    status: 'Out of Stock',
+    available: false,
+    quantity: 0
+  };
+};
 
 const ProductDetails = () => {
   const { state } = useLocation();
@@ -19,6 +30,7 @@ const ProductDetails = () => {
   const [selectedUnit, setSelectedUnit] = useState("meters");
   const [selectedSize, setSelectedSize] = useState("");
   const [calculatedPrice, setCalculatedPrice] = useState(0);
+  const [stockStatus, setStockStatus] = useState({ status: '', available: false, quantity: 0 });
 
   if (!state || !state.product) {
     navigate("/");
@@ -37,16 +49,16 @@ const ProductDetails = () => {
     const value = e.target.value;
     setSelectedSize(value);
     setCustomSize("");
-    
-    if (value) {
+
+    if (value && value !== "custom") {
       const selectedSizeObj = product.defaultSizes.find(s => s.size === value);
       if (selectedSizeObj) {
         setCalculatedPrice(selectedSizeObj.price);
-      } else {
-        setCalculatedPrice(0);
+        setStockStatus(getStockStatus(selectedSizeObj));
       }
     } else {
       setCalculatedPrice(0);
+      setStockStatus({ status: '', available: false, quantity: 0 });
     }
   };
   const handleCustomSizeChange = (e) => {
@@ -67,27 +79,27 @@ const ProductDetails = () => {
   };
 
   const handleAddToCart = () => {
-  if (!selectedSize || (selectedSize === "custom" && !customSize)) {
-    alert("Please select or enter a size");
-    return;
-  }
+    if (!selectedSize || (selectedSize === "custom" && !customSize)) {
+      alert("Please select or enter a size");
+      return;
+    }
 
-  const cartItem = {
-    id: product._id,
-    name: product.name,
-    image: product.images?.[0]?.url || '',
-    defaultSizes: product.defaultSizes,
-    variation: {
-      size: selectedSize === "custom" ? `${customSize} ${selectedUnit}` : selectedSize,
-      price: selectedSize === "custom" ? calculatedPrice : product.defaultSizes.find(s => s.size === selectedSize)?.price,
-      isCustom: selectedSize === "custom"
-    },
-    quantity: 1,
+    const cartItem = {
+      id: product._id,
+      name: product.name,
+      image: product.images?.[0]?.url || '',
+      defaultSizes: product.defaultSizes,
+      variation: {
+        size: selectedSize === "custom" ? `${customSize} ${selectedUnit}` : selectedSize,
+        price: selectedSize === "custom" ? calculatedPrice : product.defaultSizes.find(s => s.size === selectedSize)?.price,
+        isCustom: selectedSize === "custom"
+      },
+      quantity: 1,
+    };
+
+    addToCart(cartItem);
+    navigate("/cart");
   };
-
-  addToCart(cartItem);
-  navigate("/cart");
-};
 
 
   return (
@@ -95,8 +107,8 @@ const ProductDetails = () => {
       <div className="product-details-card">
         <div className="product-info">
           <div className="product-image">
-            <img 
-              src={product.images && product.images[0] ? product.images[0].url : 'http://localhost:5000/placeholder.jpg'} 
+            <img
+              src={product.images && product.images[0] ? product.images[0].url : 'http://localhost:5000/placeholder.jpg'}
               alt={product.name}
               onError={(e) => {
                 e.target.src = 'http://localhost:5000/placeholder.jpg';
@@ -121,7 +133,7 @@ const ProductDetails = () => {
             )}
           </div>
         </div>
-        
+
         <div className="size-selection">
           <h3>Standard Sizes:</h3>
           <select
@@ -130,8 +142,13 @@ const ProductDetails = () => {
           >
             <option value="">-- Select a Size --</option>
             {product.defaultSizes.map((sizeObj) => (
-              <option key={sizeObj.size} value={sizeObj.size}>
+              <option
+                key={sizeObj.size}
+                value={sizeObj.size}
+                disabled={sizeObj.stock <= 0}
+              >
                 {sizeObj.size} - රු {sizeObj.price.toFixed(2)}
+                {sizeObj.stock <= 0 ? ' (Out of Stock)' : ` (available)`}
               </option>
             ))}
           </select>
@@ -139,8 +156,15 @@ const ProductDetails = () => {
           {selectedSize && !customSize && (
             <div className="calculated-price">
               <p>Selected Size Price: රු {calculatedPrice.toFixed(2)}</p>
+              {selectedSize !== "custom" && (
+                <p className={`stock-status ${stockStatus.available ? 'in-stock' : 'out-of-stock'}`}>
+                  {stockStatus.status}
+                  {stockStatus.available && ` ( available)`}
+                </p>
+              )}
             </div>
           )}
+
 
           {product.allowCustomSize && (
             <div className="custom-size-section">
@@ -154,8 +178,8 @@ const ProductDetails = () => {
                   step="0.01"
                   min="0"
                 />
-                <select 
-                  value={selectedUnit} 
+                <select
+                  value={selectedUnit}
                   onChange={handleUnitChange}
                 >
                   <option value="meters">Meters</option>
@@ -176,13 +200,21 @@ const ProductDetails = () => {
           )}
         </div>
 
-        <button 
-          className="add-to-cart-btn" 
+        <button
+          className="add-to-cart-btn"
           onClick={handleAddToCart}
-          disabled={!selectedSize || (selectedSize === "custom" && !customSize)}
+          disabled={
+            !selectedSize ||
+            (selectedSize === "custom" && !customSize) ||
+            (selectedSize !== "custom" && !stockStatus.available)
+          }
         >
-          Add to Cart
+          {!selectedSize ? 'Select a Size' :
+            selectedSize === "custom" && !customSize ? 'Enter Custom Size' :
+              (selectedSize !== "custom" && !stockStatus.available) ? 'Out of Stock' :
+                'Add to Cart'}
         </button>
+
       </div>
     </div>
   );
