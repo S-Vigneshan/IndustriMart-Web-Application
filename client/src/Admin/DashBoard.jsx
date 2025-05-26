@@ -4,15 +4,17 @@ import Sidebar from './Sidebar';
 import axios from 'axios';
 import './Dashboard.css';
 import { useNavigate } from 'react-router-dom';
-import { FaUsers, FaShoppingCart, FaBoxes, FaChartLine, FaSync } from 'react-icons/fa';
+import { FaUsers, FaShoppingCart, FaBoxes, FaChartLine, FaSync,FaCheckCircle,FaTruck   } from 'react-icons/fa';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState({
     userCount: 0,
-    totalSales: 0,
-    productCount: 0,
-    orderCount: 0
+  totalSales: 0,
+  productCount: 0,
+  orderCount: 0,
+  deliveredOrders: 0,
+  shippedOrders: 0
   });
 
   const fetchDashboardStats = useCallback(async () => {
@@ -32,15 +34,20 @@ const Dashboard = () => {
       ]);
 
       const userCount = usersResponse.data.length;
-      const productCount = productsResponse.data.length;
-      const orderCount = ordersResponse.data.length;
-      const totalSales = ordersResponse.data.reduce((sum, order) => sum + order.totalAmount, 0);
+    const productCount = productsResponse.data.length;
+    const orders = ordersResponse.data;
+    const orderCount = orders.length;
+    const totalSales = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+    const deliveredOrders = orders.filter(order => order.status === 'Delivered').length;
+    const shippedOrders = orders.filter(order => order.status === 'Shipped').length;
 
       setStats({
         userCount,
         totalSales,
         productCount,
-        orderCount
+        orderCount,
+        deliveredOrders,
+      shippedOrders
       });
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
@@ -127,6 +134,25 @@ const Dashboard = () => {
                 <div className="stat-value">{stats.orderCount.toLocaleString()}</div>
               </div>
             </div>
+            <div className="stat-item">
+    <div className="stat-icon bg-success bg-opacity-10">
+      <FaCheckCircle className="text-success" style={{ fontSize: '1.75rem' }} />
+    </div>
+    <div className="stat-content">
+      <div className="stat-label">Delivered Orders</div>
+      <div className="stat-value">{stats.deliveredOrders.toLocaleString()}</div>
+    </div>
+  </div>
+
+  <div className="stat-item">
+    <div className="stat-icon bg-primary bg-opacity-10">
+      <FaTruck className="text-primary" style={{ fontSize: '1.75rem' }} />
+    </div>
+    <div className="stat-content">
+      <div className="stat-label">Shipped Orders</div>
+      <div className="stat-value">{stats.shippedOrders.toLocaleString()}</div>
+    </div>
+  </div>
           </div>
         </Container>
       </div>
