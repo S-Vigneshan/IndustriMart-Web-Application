@@ -152,11 +152,12 @@ const CheckoutPage = () => {
       window.payhere.startPayment(payment);
   
     } catch (error) {
-      console.error('Error initiating payment:', error);
-      alert('Failed to initiate payment. Please try again.');
-      setIsProcessing(false);
-    }
-  };
+    console.error('Error initiating payment:', error);
+    alert(error.response?.data?.message || 'Failed to initiate payment. Please try again.');
+  } finally {
+    setIsProcessing(false);
+  }
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();

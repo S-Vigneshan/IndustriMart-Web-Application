@@ -1,12 +1,42 @@
 const Order = require('../models/order');
+const Product = require('../models/product'); // Add this line
 
 exports.createOrder = async (req, res) => {
   try {
     const { items, shippingDetails, totalAmount, payment } = req.body;
 
+    // Check and update stock for default sized items
+    for (const item of items) {
+      // Only process stock update for non-custom size items
+      if (!item.variation.isCustom) {
+        const product = await Product.findById(item.id);
+        if (!product) {
+          throw new Error(`Product not found: ${item.id}`);
+        }
+
+        // Find the specific size in defaultSizes array
+        const sizeObj = product.defaultSizes.find(s => s.size === item.variation.size);
+        if (!sizeObj) {
+          throw new Error(`Size ${item.variation.size} not found for product ${item.name}`);
+        }
+
+        // Check if enough stock is available
+        if (sizeObj.stock < item.quantity) {
+          throw new Error(`Insufficient stock for ${item.name} in size ${item.variation.size}. Available: ${sizeObj.stock}, Requested: ${item.quantity}`);
+        }
+
+        // Update stock only for the selected size
+        try {
+          await product.updateStock(item.variation.size, item.quantity);
+        } catch (stockError) {
+          throw new Error(`Stock update failed for ${item.name}: ${stockError.message}`);
+        }
+      }
+    }
+
     // Create new order
     const order = new Order({
-      user: req.body.userId || '645e2309b45a6145c8820d8d', // Temporary default user ID
+      user: req.body.userId,
       items: items.map(item => ({
         productId: item.id,
         name: item.name,
@@ -14,7 +44,8 @@ exports.createOrder = async (req, res) => {
         price: item.variation.price,
         variation: {
           size: item.variation.size,
-          price: item.variation.price
+          price: item.variation.price,
+          isCustom: item.variation.isCustom
         }
       })),
       shippingDetails,
@@ -25,7 +56,6 @@ exports.createOrder = async (req, res) => {
       }
     });
 
-    // Save the order
     const savedOrder = await order.save();
 
     res.status(201).json({
@@ -35,10 +65,9 @@ exports.createOrder = async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating order:', error);
-    res.status(500).json({
+    res.status(400).json({
       success: false,
-      message: 'Error creating order',
-      error: error.message
+      message: error.message || 'Error creating order'
     });
   }
 };
