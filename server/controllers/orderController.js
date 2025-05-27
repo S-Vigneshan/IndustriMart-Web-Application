@@ -1,32 +1,40 @@
 const Order = require('../models/order');
+const Product = require('../models/product');
 
 exports.createOrder = async (req, res) => {
   try {
     const { items, shippingDetails, totalAmount, payment } = req.body;
 
-    // Create new order
+    // Create new order    // Format items to include correct productId
+    const formattedItems = items.map(item => ({
+      productId: item.id, // Store the product ID
+      name: item.name,
+      quantity: item.quantity,
+      price: item.variation.price,
+      variation: {
+        size: item.variation.size,
+        price: item.variation.price
+      }
+    }));
+
     const order = new Order({
       user: req.body.userId || '645e2309b45a6145c8820d8d', // Temporary default user ID
-      items: items.map(item => ({
-        productId: item.id,
-        name: item.name,
-        quantity: item.quantity,
-        price: item.variation.price,
-        variation: {
-          size: item.variation.size,
-          price: item.variation.price
-        }
-      })),
+      items: formattedItems,
       shippingDetails,
       totalAmount,
       payment: {
         method: payment.method,
         status: 'Pending'
       }
-    });
-
-    // Save the order
-    const savedOrder = await order.save();
+    });    // Save the order
+    const savedOrder = await order.save();    // Update product stock after successful order
+    try {
+      await Product.updateStockOnOrder(formattedItems);
+    } catch (error) {
+      // If stock update fails, delete the order and throw error
+      await Order.findByIdAndDelete(savedOrder._id);
+      throw new Error(`Stock update failed: ${error.message}`);
+    }
 
     res.status(201).json({
       success: true,

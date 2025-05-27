@@ -47,12 +47,18 @@ const CheckoutPage = () => {
       [name]: value
     }));
   };
-
   const handleCashOnDelivery = async () => {
   try {
     setIsProcessing(true);
+    const formattedItems = cartItems.map(item => ({
+      id: item.id,          // This is the product ID
+      name: item.name,
+      quantity: item.quantity,
+      variation: item.variation
+    }));
+
     const orderData = {
-      items: cartItems,
+      items: formattedItems,
       shippingDetails,
       totalAmount: calculateTotal(),
       userId: userId,
@@ -76,11 +82,17 @@ const CheckoutPage = () => {
     setIsProcessing(false);
   }
 };
-
   const handleOnlinePayment = async () => {
     try {
+      const formattedItems = cartItems.map(item => ({
+        id: item.id,          // This is the product ID
+        name: item.name,
+        quantity: item.quantity,
+        variation: item.variation
+      }));
+
       const orderData = {
-        items: cartItems,
+        items: formattedItems,
         shippingDetails,
         totalAmount: calculateTotal(),
         userId: userId,
