@@ -184,7 +184,7 @@ const Signup = () => {
 
         <button 
           type="submit" 
-          className="btn btn-primary btn-block"
+          className="btn btn-primary btn-block d-block mx-auto"
           disabled={isLoading}
         >
           {isLoading ? 'Signing up...' : 'Sign Up'}
