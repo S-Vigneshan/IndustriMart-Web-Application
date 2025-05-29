@@ -32,8 +32,26 @@ exports.sendOTP = async (req, res) => {
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
-      subject: 'Password Reset OTP',
-      text: `Your OTP for password reset is: ${otp}. This OTP will expire in 5 minutes.`
+      subject: 'Password Reset OTP - IndustriMart',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h1 style="color: #007bff; margin: 0;">IndustriMart</h1>
+            <p style="color: #666; font-size: 14px;">Password Reset Request</p>
+          </div>
+          
+          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+            <p style="margin: 0; font-size: 16px; color: #333;">Your OTP for password reset is:</p>
+            <h2 style="margin: 10px 0; color: #007bff; font-size: 32px; letter-spacing: 5px;">${otp}</h2>
+            <p style="margin: 0; color: #666; font-size: 14px;">This OTP will expire in 5 minutes.</p>
+          </div>
+          
+          <div style="text-align: center; color: #666; font-size: 12px;">
+            <p>If you didn't request this password reset, please ignore this email.</p>
+            <p>© ${new Date().getFullYear()} IndustriMart. All rights reserved.</p>
+          </div>
+        </div>
+      `
     });
 
     res.status(200).json({ message: 'OTP sent successfully' });
