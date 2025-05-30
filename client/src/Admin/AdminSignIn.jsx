@@ -18,7 +18,7 @@ const AdminSignIn = () => {
     try {
       if (
         credentials.email === 'admin@example.com' &&
-        credentials.password === 'admin123'
+        credentials.password === 'Admin@123'
       ) {
         localStorage.setItem('isAdmin', 'true');
         navigate('/admin/dashboard');
